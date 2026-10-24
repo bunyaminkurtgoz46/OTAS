@@ -287,6 +287,11 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .kind-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .kind-grid button { min-height: 52px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface-2); font-weight: 700; font-size: 14px; color: var(--fg); padding: 6px 10px; }
 .kind-grid button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-fg); }
+/* Sürüm 4: yazarak kayıt */
+.card.yaz { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
+.yaz-row { display: flex; gap: 8px; align-items: stretch; }
+.yaz-row textarea { flex: 1; min-width: 0; min-height: 52px; resize: vertical; font: inherit; color: var(--fg); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+.yaz-row .btn { min-width: 52px; padding: 0 14px; }
 
 </style>
 </head>
@@ -1036,7 +1041,9 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     var root = document.getElementById('sheet-root');
     root.innerHTML = '<div class="sheet-back"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">' +
       '<div class="sheet-grip"></div><div class="sheet-head"><h2 class="sheet-title" id="sheet-title">' + esc(title) + '</h2>' +
-      '<button class="icon-btn" type="button" data-act="sheet-close" aria-label="Kapat">' + ic('x') + '</button></div>' + body + '</div></div>';
+      '<button class="icon-btn" type="button" data-act="sheet-close" aria-label="Kapat">' + ic('x') + '</button></div>' +
+      (PF_HINT ? '<div class="note" style="margin-bottom:12px">' + ic('info') + '<div>' + esc(PF_HINT) + '</div></div>' : '') + body + '</div></div>';
+    PF_HINT = ''; PF = null;
     document.body.style.overflow = 'hidden';
     var sh = root.querySelector('.sheet');
     if (onMount) onMount(sh);
@@ -1187,6 +1194,146 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     return { parts: parts, mats: mats };
   }
 
+  // ---------- Yazarak kayıt (Sürüm 4) ----------
+  // "Makiş bugün 70 baba imalat", "Maraş galvanize 29 korkuluk gitti" gibi cümleden ilgili formu doldurur; kayıt formda onaylanınca girer.
+  var PF = null, PF_HINT = '';
+  function takePF() { var x = PF || {}; PF = null; return x; }
+  function fold(s) { return lower(s).replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c').replace(/â/g, 'a').replace(/î/g, 'i'); }
+  function words(s) { return fold(s).split(/[^a-z0-9]+/).filter(Boolean); }
+  // Kelime eşleşmesi: Türkçe ekleri tolere etmek için ortak başlangıç (en az 4 harf ya da kelimenin tamamı)
+  function wmatch(w, tok) {
+    if (w === tok) return true;
+    if (tok.length < 3 || w.length < 3) return false;
+    var n = Math.min(w.length, tok.length);
+    if (n < 4) return w.indexOf(tok) === 0 && tok.length >= 3;
+    return w.slice(0, Math.max(4, n - 1)) === tok.slice(0, Math.max(4, n - 1)) || w.indexOf(tok) === 0;
+  }
+  var PJ_STOP = { koprusu: 1, kopru: 1, proje: 1, projesi: 1, insaat: 1, hat: 1, tek: 1, ano: 1, rev: 1, kenar: 1, pelitli: 0 };
+  function findProject(ws) {
+    var best = null, bestS = 0;
+    S.projects.forEach(function (pj) {
+      var toks = words([pj.name, pj.customer].join(' ')).filter(function (t) { return t.length >= 3 && !PJ_STOP[t] && !/^\d+$/.test(t); });
+      var sc = 0, used = [];
+      toks.forEach(function (t) { ws.forEach(function (w, i) { if (used.indexOf(i) < 0 && wmatch(w, t)) { sc++; used.push(i); } }); });
+      if (pj.status === 'bitti') sc -= 0.5;
+      if (sc > bestS) { bestS = sc; best = { pj: pj, used: used }; }
+    });
+    return bestS > 0 ? best : null;
+  }
+  var ACT_WORDS = {
+    santiye: ['santiye', 'santiyeye', 'sahaya', 'saha'],
+    galvaniz: ['galvaniz', 'galvanize', 'galvanizci', 'galvanizciye'],
+    kesim: ['kesildi', 'kesim', 'kestik', 'kesilen', 'kesti'],
+    imalat: ['imalat', 'imalati', 'uretildi', 'uretim', 'yapildi', 'yaptik', 'bitti', 'biten', 'imal', 'kaynatildi', 'tamamlandi']
+  };
+  function findAction(ws) {
+    var has = {};
+    Object.keys(ACT_WORDS).forEach(function (k) { has[k] = ws.some(function (w) { return ACT_WORDS[k].some(function (t) { return w === t || (t.length >= 6 && w.indexOf(t) === 0); }); }); });
+    if (has.santiye) return 'santiye';      // "galvanizden şantiyeye" şantiye sevkidir
+    if (has.galvaniz) return 'galvaniz';
+    if (has.kesim && !has.imalat) return 'kesim';
+    if (has.imalat) return 'imalat';
+    return '';
+  }
+  // Tarih: bugün (varsayılan), dün, evvelsi gün, 12.10 / 12.10.2026
+  function findDate(text) {
+    var f = fold(text), m = /(\d{1,2})[.\/](\d{1,2})(?:[.\/](\d{2,4}))?/.exec(f);
+    if (m) {
+      var y = m[3] ? (m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3])) : new Date().getFullYear();
+      var d = toISO(new Date(y, Number(m[2]) - 1, Number(m[1])));
+      return { date: d > today() ? today() : d, raw: m[0] };
+    }
+    if (/\bevvelsi gun|\bonceki gun/.test(f)) return { date: addDays(today(), -2), raw: '' };
+    if (/\bdun\b|\bdunku\b/.test(f)) return { date: addDays(today(), -1), raw: '' };
+    return { date: today(), raw: '' };
+  }
+  // Sayı + ardından gelen kelime çiftleri: "29 ano", "70 adet korkuluk", "4 uç"
+  function qtyPairs(text, skipIdx) {
+    var ws = words(text), out = [];
+    ws.forEach(function (w, i) {
+      if (!/^\d+$/.test(w) || skipIdx.indexOf(i) >= 0) return;
+      var nx = ws[i + 1] || '', nx2 = ws[i + 2] || '';
+      if (nx === 'adet' || nx === 'tane' || nx === 'takim') nx = nx2 || nx;
+      out.push({ n: Number(w), w: nx });
+    });
+    return out;
+  }
+  var GENERIC = { korkuluk: 1, adet: 1, tane: 1, parca: 1, takim: 1 };
+  // Kelimeyi projedeki kaleme eşle (ürün birimi/adı ya da ek kalem adı); boş/genel kelime → ana ürün
+  function itemFor(pj, w, list) {
+    var main = list.filter(function (it) { return it.prod; })[0] || list[0];
+    if (!w || GENERIC[w] || !/[a-z]/.test(w)) return main;
+    var hit = null;
+    list.forEach(function (it) {
+      if (hit) return;
+      var toks = words([it.unit, it.name, it.short].join(' ')).filter(function (t) { return t.length >= 2; });
+      if (toks.some(function (t) { return wmatch(w, t) || (w.length >= 2 && t === w); })) hit = it;
+    });
+    if (!hit && /^kapanis|^bitim/.test(w)) hit = list.find(function (it) { return it.prod && /kapan|bitim|k\. ?baba/i.test(fold(it.name + ' ' + it.unit)); });
+    return hit || null;
+  }
+  function parseCmd(text) {
+    var ws = words(text), dt = findDate(text), clean = dt.raw ? fold(text).replace(dt.raw, ' ') : text;
+    var act = findAction(ws), fp = findProject(words(clean));
+    var r = { act: act, date: dt.date, pj: fp && fp.pj, items: {}, part: null, qty: 0, unknown: [] };
+    var cws = words(clean), skip = fp ? fp.used.filter(function (i) { return /^\d+$/.test(cws[i]); }) : [];
+    // proje adındaki sayılar (ör. Aksu-2) adet sayılmasın
+    if (fp) words(fp.pj.name).forEach(function (t) { if (/^\d+$/.test(t)) cws.forEach(function (w, i) { if (w === t && i > 0 && fp.used.indexOf(i - 1) >= 0) skip.push(i); }); });
+    var pairs = qtyPairs(clean, skip);
+    if (act === 'kesim') {
+      var best = null, bs = 0;
+      S.parts.forEach(function (p) { var sc = 0; words(p.name + ' ' + (p.spec || '')).forEach(function (t) { if (t.length >= 3 && !/^\d+$/.test(t) && cws.some(function (w) { return wmatch(w, t); })) sc++; }); if (sc > bs) { bs = sc; best = p; } });
+      r.part = best; r.qty = pairs.length ? pairs[0].n : 0;
+      return r;
+    }
+    if (!r.pj) return r;
+    var list = shipItems(r.pj, act === 'galvaniz' ? 'galvaniz' : 'santiye');
+    if (act === 'imalat') list = list.filter(function (it) { return it.prod; });
+    pairs.forEach(function (p) {
+      var it = itemFor(r.pj, p.w, list);
+      if (it) r.items[it.key] = (r.items[it.key] || 0) + p.n; else r.unknown.push(p.n + ' ' + p.w);
+    });
+    return r;
+  }
+  function runCmd(text) {
+    var msg = document.getElementById('yaz-msg');
+    function say(t) { if (msg) { msg.textContent = t; msg.hidden = false; } else toast(t); }
+    text = String(text || '').trim();
+    if (!text) return say('Bir cümle yazın. Örn: Makiş bugün 70 baba imalat yapıldı.');
+    var r = parseCmd(text), names = S.projects.filter(function (p) { return p.status !== 'bitti'; }).map(function (p) { return p.name; }).join(', ');
+    if (!r.act) return say('Ne yapıldığını anlayamadım. "imalat yapıldı", "galvanize gitti", "şantiyeye sevk edildi" ya da "kesildi" gibi yazın.');
+    if (r.act === 'kesim') {
+      if (!r.part) return say('Hangi parça kesildi? Örn: 200 manşon kesildi, 300 dikme sacı lazerden geldi.');
+      PF = { qty: r.qty || '', date: r.date };
+      PF_HINT = 'Yazdığınızdan doldurdum: ' + r.part.name + (r.qty ? ' · ' + fmt(r.qty) + ' adet' : '') + ' · ' + fmtDay(r.date) + '. Kontrol edip Kaydet\'e basın.';
+      formKesim(null, r.part.id, r.part.source);
+      return;
+    }
+    if (!r.pj) return say('Hangi proje olduğunu bulamadım. Proje adından bir kelime yazın: ' + names + '.');
+    var keys = Object.keys(r.items);
+    if (!keys.length) return say('Adedi bulamadım. Sayıyı rakamla yazın, örn: ' + r.pj.name + ' 70 adet.');
+    var list = shipItems(r.pj, 'santiye'), lbl = keys.map(function (k) { var it = list.find(function (x) { return x.key === k; }); return fmt(r.items[k]) + ' ' + (it ? (it.prod ? it.unit : lower(it.short)) : k); }).join(', ');
+    var what = { imalat: 'biten imalat', galvaniz: 'galvanize giden', santiye: 'şantiyeye giden' }[r.act];
+    PF_HINT = 'Yazdığınızdan doldurdum: ' + r.pj.name + ' · ' + what + ' ' + lbl + ' · ' + fmtDay(r.date) + (r.unknown.length ? '. Anlaşılmayan: ' + r.unknown.join(', ') : '') + '. Kontrol edip Kaydet\'e basın.';
+    if (r.act === 'imalat') {
+      var k0 = keys[0];
+      PF = { qty: r.items[k0], date: r.date, projectId: r.pj.id, productId: k0.slice(2) };
+      if (keys.length > 1) PF_HINT += ' (Birden fazla ürün yazdınız; önce ' + lbl.split(', ')[0] + ' açıldı, diğerini ayrıca girin.)';
+      formImalat(null, r.pj.id);
+    } else {
+      PF = { date: r.date, projectId: r.pj.id, items: r.items };
+      formSevk(r.act, null, r.pj.id);
+    }
+    var ta = document.getElementById('yaz-text'); if (ta) ta.value = '';
+    if (msg) msg.hidden = true;
+  }
+  function yazCard() {
+    return '<form class="card yaz" id="f-yaz" novalidate><label class="label" for="yaz-text">Yazarak kayıt gir</label>' +
+      '<div class="yaz-row"><textarea id="yaz-text" rows="2" maxlength="300" enterkeyhint="send" placeholder="Örn: Makiş bugün 70 baba imalat yapıldı · Maraş galvanize 29 ano gitti"></textarea>' +
+      '<button class="btn primary" type="submit" aria-label="Anla ve formu aç">' + ic('send') + '</button></div>' +
+      '<div class="hint" id="yaz-msg" hidden></div></form>';
+  }
+
   // ---------- Pano ----------
   // Proje ilerlemesi (tonaja göre; ağırlığı girilmemiş kalemler hesaba girmez, hiç ağırlık yoksa adede göre)
   function projProgress(pj) {
@@ -1222,6 +1369,8 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     var c = calc(), t = c.t, h = '';
     h += installBanner();
     if (!storageOk) h += '<div class="note">' + ic('info') + '<div><strong>Kayıtlar saklanamıyor.</strong> Bu tarayıcı kayıt tutmaya izin vermiyor; sayfa kapanınca girilenler silinir.</div></div>';
+
+    h += yazCard();
 
     // Projeler: sade ilerleme özeti
     var order = { aktif: 0, sirada: 1, durdu: 2 };
@@ -1820,7 +1969,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
   function formImalat(entry, presetProject) {
     var pid0 = (entry && entry.projectId) || presetProject || defaultProjectId();
     if (!pid0) { toast('Önce bir proje ekleyin'); go('yeni'); return; }
-    var e = entry || { date: today(), qty: '', projectId: pid0, productId: null, detail: {}, note: '' };
+    var e = entry || Object.assign({ date: today(), qty: '', projectId: pid0, productId: null, detail: {}, note: '' }, takePF());
     var d = e.detail || {};
     var hasD = ['kesim', 'capak', 'punta', 'kaynak', 'kisi', 'tartim'].some(function (k) { return d[k]; });
     function n(k, label, mode) {
@@ -1844,7 +1993,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       var f = sh.querySelector('form');
       function prodChoices(keep) {
         var pj = project(f.elements.projectId.value), lines = pj ? (pj.lines || []) : [];
-        var cur = keep ? radioVal(f, 'productId', null) : (entry && entry.projectId === f.elements.projectId.value ? entry.productId : null);
+        var cur = keep ? radioVal(f, 'productId', null) : (e.projectId === f.elements.projectId.value ? e.productId : null);
         if (!lines.some(function (l) { return l.productId === cur; })) cur = lines[0] && lines[0].productId;
         sh.querySelector('#im-prod').innerHTML = '<div class="seg" role="radiogroup">' + lines.map(function (l) {
           var pr = product(l.productId); if (!pr) return '';
@@ -1903,7 +2052,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     if (!pid) { var needy = pool.map(function (p) { return calc().fc[p.id]; }).sort(function (a, b) { return SEV[a.status] - SEV[b.status]; })[0]; pid = needy && needy.p.id; }
     if (!pid) { toast('Önce bir parça ekleyin'); return; }
     var p0 = part(pid), fab = src === 'fabrika';
-    var e = entry || { date: today(), qty: '', rejected: '', partId: pid, method: p0.method, source: src, talepId: null, note: '' };
+    var e = entry || Object.assign({ date: today(), qty: '', rejected: '', partId: pid, method: p0.method, source: src, talepId: null, note: '' }, takePF());
     var methods = fab ? { testere: 'Testere', plazma: 'Plazma', diger: 'Diğer' } : { lazer: 'Lazer', plazma: 'Plazma', diger: 'Diğer' };
     if (!methods[e.method]) e.method = Object.keys(methods)[0];
     var body = '<form id="f-kesim" novalidate>' +
@@ -2218,7 +2367,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     var gal = type === 'galvaniz';
     var pid = (entry && entry.projectId) || presetProject || defaultProjectId();
     if (!pid) { toast('Önce bir proje ekleyin'); return; }
-    var e = entry || { date: today(), projectId: pid, items: {}, plaka: '', sofor: '', kg: '', galvKg: '', galvFis: '', fisNo: '', siteRef: '', teslimAlan: '', irsaliye: '', note: '' };
+    var e = entry || Object.assign({ date: today(), projectId: pid, items: {}, plaka: '', sofor: '', kg: '', galvKg: '', galvFis: '', fisNo: '', siteRef: '', teslimAlan: '', irsaliye: '', note: '' }, takePF());
     var body = '<form id="f-sevk" novalidate>' +
       '<div class="field"><label for="sv-proje">Proje</label><select id="sv-proje" name="projectId">' + projOptions(e.projectId, [e.projectId]) + '</select></div>' +
       '<div class="field"><span class="flabel">Giden adetler</span><div class="stack" id="sv-items"></div></div>' +
@@ -2247,7 +2396,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
         var pj = project(f.elements.projectId.value), list = items(), prev = {};
         if (keep) list.forEach(function (it) { var el = f.elements['it-' + it.key]; if (el) prev[it.key] = el.value; });
         sh.querySelector('#sv-items').innerHTML = list.map(function (it) {
-          var av = avail(type, pj, it, entry), val = keep ? (prev[it.key] || '') : (entry && entry.projectId === pj.id ? (e.items[it.key] || '') : '');
+          var av = avail(type, pj, it, entry), val = keep ? (prev[it.key] || '') : (e.projectId === pj.id ? (e.items[it.key] || '') : '');
           var sh2 = calc().ship[pj.id] || emptyShip(), sent = (gal ? sh2.gal : sh2.san)[it.key] || 0;
           if (entry && entry.projectId === pj.id) sent -= Number(e.items[it.key]) || 0;
           var avTxt = av == null ? '' : (gal ? (it.prod ? 'Fabrikada hazır ' : 'Fabrikada ') : (viaGalv(it) ? 'Galvanizde ' : 'Fabrikada ')) + fmtQ(av);
@@ -3442,6 +3591,15 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
   // ---------- Olaylar ----------
   function onClick(ev) {
     var t = ev.target;
+    // Gönder düğmeleri formu kendimiz tetikler: form gönderimi kapalı çerçevelerde (ör. önizleme sayfası) de çalışsın
+    var sb = t.closest && t.closest('button[type=submit]');
+    if (sb && sb.form) {
+      ev.preventDefault();
+      var se;
+      try { se = new SubmitEvent('submit', { bubbles: true, cancelable: true, submitter: sb }); } catch (e) { se = new Event('submit', { bubbles: true, cancelable: true }); try { Object.defineProperty(se, 'submitter', { value: sb }); } catch (e2) { /* yok say */ } }
+      sb.form.dispatchEvent(se);
+      return;
+    }
     if (t.classList && t.classList.contains('sheet-back')) { closeSheet(); return; }
     var st = t.closest('[data-step],[data-add],[data-set]');
     if (st) {
@@ -3557,6 +3715,15 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     document.addEventListener('click', onClick);
     // Güvenlik ağı: hiçbir form sayfayı yeniden yüklemesin
     document.addEventListener('submit', function (ev) { ev.preventDefault(); }, true);
+    document.addEventListener('submit', function (ev) { if (ev.target && ev.target.id === 'f-yaz') runCmd(ev.target.querySelector('#yaz-text').value); });
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' && !ev.shiftKey && ev.target && ev.target.id === 'yaz-text') { ev.preventDefault(); runCmd(ev.target.value); }
+    });
+    // Telefon klavyesi Enter'ı satır sonu olarak yazarsa da gönder
+    document.addEventListener('input', function (ev) {
+      var t = ev.target;
+      if (t && t.id === 'yaz-text' && /\n/.test(t.value)) { t.value = t.value.replace(/\s*\n\s*/g, ' ').trim(); runCmd(t.value); }
+    });
     document.addEventListener('change', onSettingChange);
     // Sayfa içi formlar (yeni proje, reçete): taslağa yaz, yeniden çizmeden hesapları güncelle
     function onPageInput(ev) {

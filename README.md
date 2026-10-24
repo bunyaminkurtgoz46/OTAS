@@ -10,6 +10,9 @@ sevkiyatı kantar fişleriyle kayıt altına almak.
   - Yüzdeler tonaja göredir. Ağırlığı girilmemiş kalem (ör. cıvata) hesaba girmez.
   - Altında tek satır "Bugün" özeti ve **Gir** düğmesi.
   - Eski pano uyarıları (biten parça, alınacak malzeme, tartım, eksik kantar fişi, başlangıç sayımı) en altta katlanır **Uyarılar** bölümünde. Acil olan varsa kırmızı sayı görünür.
+- **Yazarak kayıt:** panonun en üstündeki alana cümle yazın (telefon klavyesinin mikrofonuyla sesli de olur). Örn. "Makiş bugün 70 korkuluk imalatı yapıldı", "Maraş galvanize 29 ano gitti", "Makiş şantiyeye 120 baba 200 boru gitti", "300 manşon kesildi", "Kadirli dün 12 ano bitti".
+  - Uygulama projeyi (adından bir kelime yeter, Türkçe harfsiz de olur), işlemi (imalat / galvaniz / şantiye / kesim), adedi ve tarihi (bugün, dün, 15.10) bulur; ilgili formu doldurup açar. Kayıt siz Kaydet'e basınca girer.
+  - "Korkuluk" ya da "adet" projenin ana ürünü sayılır (Makiş'te baba, Maraş'ta ano). İnternet gerekmez.
 - **Malzeme girişi (hadde):** Stok → Malzeme stoğu → **Malzeme girişi** (ya da + menüsü). Projeye bağlı değildir.
   - Önce tür seçilir: Kare/dikdörtgen profil, Boru, Köşebent, NPU, Lama, Sac.
   - Sonra yalnızca o türün alanları sorulur: kare profil ve köşebent → ebat, kalınlık, boy uzunluğu, adet · boru → çap, kalınlık, boy uzunluğu, adet · NPU → NPU no, boy uzunluğu, adet · lama → genişlik, kalınlık, boy uzunluğu, adet · sac → kalınlık, plaka ebadı, adet.
