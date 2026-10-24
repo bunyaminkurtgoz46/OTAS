@@ -1,5 +1,5 @@
 /* DUVPAN Fabrika — çevrimdışı çalışma. Yeni sürüm yayınlarken VERSION'ı artırın. */
-const VERSION = 'fabrika-v3-1';
+const VERSION = 'fabrika-v4-1';
 const FONTS = VERSION + '-font';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 

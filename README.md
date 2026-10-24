@@ -1,8 +1,30 @@
-# DUVPAN Fabrika · Sürüm 3
+# DUVPAN Fabrika · Sürüm 4 (REV-4)
 
 Fabrikada biten imalatı, kesimi, hammadde stoğunu ve sevkiyatı (atölye → galvaniz → şantiye) takip eder.
 Asıl işi: parça veya malzeme bitmeden önce uyarmak, lazerciye ve tedarikçiye zamanında haber vermek,
 sevkiyatı kantar fişleriyle kayıt altına almak.
+
+## Sürüm 4'te yeni
+
+- **Pano sadeleşti:** projeler alt alta, her biri için üç çubuk: **İmalat %**, **Galvaniz %**, **Şantiye sevk %** (ör. "Trabzon Makiş — İmalat %100 · Galvaniz %100 · Şantiye sevk %30").
+  - Yüzdeler tonaja göredir. Ağırlığı girilmemiş kalem (ör. cıvata) hesaba girmez.
+  - Altında tek satır "Bugün" özeti ve **Gir** düğmesi.
+  - Eski pano uyarıları (biten parça, alınacak malzeme, tartım, eksik kantar fişi, başlangıç sayımı) en altta katlanır **Uyarılar** bölümünde. Acil olan varsa kırmızı sayı görünür.
+- **Malzeme girişi (hadde):** Stok → Malzeme stoğu → **Malzeme girişi** (ya da + menüsü). Projeye bağlı değildir.
+  - Önce tür seçilir: Kare/dikdörtgen profil, Boru, Köşebent, NPU, Lama, Sac.
+  - Sonra yalnızca o türün alanları sorulur: kare profil ve köşebent → ebat, kalınlık, boy uzunluğu, adet · boru → çap, kalınlık, boy uzunluğu, adet · NPU → NPU no, boy uzunluğu, adet · lama → genişlik, kalınlık, boy uzunluğu, adet · sac → kalınlık, plaka ebadı, adet.
+  - "Yeni geldi" stoğa ekler, "Sayım" stoğu yazılan sayıya eşitler. Nerede olduğu (Fabrika / Lazerci / Plazmacı) seçilir.
+  - Aynı tür + ölçü + boy daha önce girildiyse aynı kaleme eklenir (ör. köşebent 80×80×8, 6 m → yüklü L80×80×8). Kalem adı ve yaklaşık ağırlığı otomatik oluşur.
+- **Stok boy boy:** profil, boru, köşebent boy boy; sac plaka plaka tutulur. Listede boy sayısının altında toplam metre ve yaklaşık kg görünür. Toplu sayım türlere göre gruplu.
+- **Kompakt stok listesi:** Malzeme stoğu artık türlere göre gruplu, tek satırlık liste (ad, ölçü, miktar). Sadece gerekirse konum ve "Alınmalı" gibi durum görünür. Ayrıntı ve düğmeler kaleme dokununca açılır.
+- **Ayrıntılı paylaşım:** "Paylaş" ile WhatsApp'a giden liste her kalem için adet, toplam metre, yaklaşık kg, konum, işler için gereken / siparişte / eksik ve not içerir; grup ve genel tonaj yazılır.
+- Eski kayıtlar olduğu gibi korunur; yüklü hammaddelere (L80, L40, NPU80/100, Boru Ø88,9, Sac t10/t15) hadde ölçüleri kendiliğinden eklenir.
+
+## Sürüm 4 düzeltmeleri
+
+- **Flanş 297:** 6000×1510 sacdan 1 plakada çıkan adet 121 yerine **100** oldu (20 × 5). Önceki sürümde sac ihtiyacı olduğundan az görünüyordu. Kurulu uygulamada eski değer 121 ise açılışta kendiliğinden 100'e çekilir; elle başka bir değer girdiyseniz dokunulmaz.
+- **Sürüm adları birleştirildi:** klasör, README, uygulama alt bilgisi ve önbellek hepsi artık "Sürüm 4".
+- **README düzeltildi:** projeler alt menüdeki **Proje** sekmesinden açılır.
 
 ## Sürüm 3'te yeni
 
@@ -62,16 +84,17 @@ Aynı ürünü yapan iki proje birlikte üretimdeyse, bitiş tahmini için ürü
 
 ## İlk iş: başlangıç sayımı
 
-Panodaki **"Başlangıç sayımını gir"** düğmesiyle fabrikadaki parça ve malzeme miktarlarını tek ekranda girin.
+Panodaki **Uyarılar** bölümündeki **"Başlangıç sayımını gir"** düğmesiyle (ya da Stok → Toplu sayım) fabrikadaki parça ve malzeme miktarlarını tek ekranda girin.
 Sayılmayan kalemler "Stok girilmedi" olarak görünür ve uyarı üretmez.
 
 ## Ekranlar
 
-- **Pano:** acil uyarılar, alınacak malzeme listesi, tartım hatırlatması, eksik kantar fişleri, bugünkü imalat ve projeler
+- **Pano:** projelerin imalat / galvaniz / şantiye sevk yüzdeleri, bugünkü imalat ve katlanır Uyarılar (acil stok, alınacak malzeme, tartım, eksik kantar fişi)
 - **Stok:** üretimdeki parçalar, sıradaki işlerin parçaları ve hammadde (fabrikada ne var, ne siparişte, ne eksik)
 - **Galvaniz:** fabrikadan galvanize giden seferler (her proje için hedef, giden, kalan ve fabrikada hazır olan)
 - **Şantiye:** galvanizden şantiyeye giden seferler. Galvaniz ve şantiye kantarı (fiş no + kg), adetler, hat/kenar/ano no ve teslim alan kaydedilir. Hakediş tutarı da burada görünür.
-- **Üst köşe:** Geçmiş (tüm kayıtlar) ve Ayarlar (ürün, parça, hammadde, yedek). Projeler panodan açılır.
+- **Üst köşe:** Geçmiş (tüm kayıtlar) ve Ayarlar (ürün, parça, hammadde, yedek).
+- **Proje:** alt menüdeki Proje sekmesinden tüm projeler listelenir ve açılır; panodaki proje kartlarından da girilebilir.
 
 ## Kayıt türleri (+ düğmesi)
 
@@ -94,6 +117,7 @@ Hepsi **Ayarlar**'dan değiştirilebilir:
 - Günlük kapasite: **baba 70**, **ano 12**, kapanış babası 2, uç 4. Ano kapasitesi tahmindir; gerçek imalat girildikçe ortalama hız kullanılır.
 - Kesim süreleri: lazer parçaları **3 iş günü**, fabrikada kesilenler **1 iş günü**.
 - Tedarik süreleri: profiller ve manşon borusu **5 iş günü**, Ø88,9 boru **7 iş günü**, dübel ve cıvata **3 iş günü**.
+- Flanş 297: 6000×1510 plakadan **100 adet** çıkıyor (20 × 5, fire payı yok).
 - Flanş 200 için plakadan kaç adet çıktığı girilmedi (sac stoğundan düşmez).
 - Sac plaka ağırlıkları 6000×1510 için hesaplandı: t10 = 711,2 kg, t15 = 1.066,8 kg.
 - Cıvata ağırlığı girilmedi; girilene kadar kantar tahminlerine katılmaz.

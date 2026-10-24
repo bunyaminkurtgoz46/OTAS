@@ -267,6 +267,27 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 .rd-row select, .card.form select { min-height: 44px; }
 [aria-invalid="true"] { border-color: var(--red) !important; }
 
+/* Sürüm 4: pano ilerleme özeti */
+.card.prog { display: block; text-decoration: none; color: inherit; padding: 12px 14px; }
+.prog-rows { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+.prog-row { display: grid; grid-template-columns: 92px 1fr 48px; align-items: center; gap: 10px; font-size: 13px; color: var(--fg-2); }
+.prog-row strong { text-align: right; color: var(--fg); font: 700 18px/1 var(--font-head); }
+.bar.galv > span { background: #A9B7C6; }
+.fold-head { width: 100%; text-align: left; }
+.fold-chev svg { transition: transform .15s; }
+.fold-head[aria-expanded="true"] .fold-chev svg { transform: rotate(90deg); }
+/* Sürüm 4: kompakt stok listesi */
+.item.cmp { padding: 9px 12px; gap: 10px; min-height: 46px; }
+.item.cmp .item-title { font-size: 14px; }
+.item.cmp .item-sub { font-size: 12px; margin-top: 1px; }
+.qty { font: 700 20px/1 var(--font-head); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; }
+.qty .u { font: 600 13px var(--font-head); color: var(--fg-2); margin-left: 3px; }
+.qty .s { display: block; font: 500 11px var(--font-body); color: var(--fg-3); margin-top: 2px; }
+.grp-head { display: flex; justify-content: space-between; align-items: baseline; margin: 4px 2px -4px; }
+.kind-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kind-grid button { min-height: 52px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface-2); font-weight: 700; font-size: 14px; color: var(--fg); padding: 6px 10px; }
+.kind-grid button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--primary-fg); }
+
 </style>
 </head>
 <body>
@@ -293,7 +314,7 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 <script>
 const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z\"></path><path d=\"M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8\"></path><path d=\"M12 17.5v-11\"></path></svg>","warehouse":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z\"></path><path d=\"M6 18h12\"></path><path d=\"M6 14h12\"></path><rect width=\"12\" height=\"12\" x=\"6\" y=\"10\"></rect></svg>","weight":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"5\" r=\"3\"></circle><path d=\"M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z\"></path></svg>","boxes":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z\"></path><path d=\"m7 16.5-4.74-2.85\"></path><path d=\"m7 16.5 5-3\"></path><path d=\"M7 16.5v5.17\"></path><path d=\"M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z\"></path><path d=\"m17 16.5-5-3\"></path><path d=\"m17 16.5 4.74-2.85\"></path><path d=\"M17 16.5v5.17\"></path><path d=\"M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z\"></path><path d=\"M12 8 7.26 5.15\"></path><path d=\"m12 8 4.74-2.85\"></path><path d=\"M12 13.5V8\"></path></svg>","layout-dashboard":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"7\" height=\"9\" x=\"3\" y=\"3\" rx=\"1\"></rect><rect width=\"7\" height=\"5\" x=\"14\" y=\"3\" rx=\"1\"></rect><rect width=\"7\" height=\"9\" x=\"14\" y=\"12\" rx=\"1\"></rect><rect width=\"7\" height=\"5\" x=\"3\" y=\"16\" rx=\"1\"></rect></svg>","layers":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z\"></path><path d=\"m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65\"></path><path d=\"m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65\"></path></svg>","plus":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path><path d=\"M12 5v14\"></path></svg>","folder-kanban":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z\"></path><path d=\"M8 10v4\"></path><path d=\"M12 10v2\"></path><path d=\"M16 10v6\"></path></svg>","history":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"></path><path d=\"M3 3v5h5\"></path><path d=\"M12 7v5l4 2\"></path></svg>","settings":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z\"></path><circle cx=\"12\" cy=\"12\" r=\"3\"></circle></svg>","factory":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z\"></path><path d=\"M17 18h1\"></path><path d=\"M12 18h1\"></path><path d=\"M7 18h1\"></path></svg>","scissors":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"6\" cy=\"6\" r=\"3\"></circle><path d=\"M8.12 8.12 12 12\"></path><path d=\"M20 4 8.12 15.88\"></path><circle cx=\"6\" cy=\"18\" r=\"3\"></circle><path d=\"M14.8 14.8 20 20\"></path></svg>","zap":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\"></path></svg>","flame":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z\"></path></svg>","triangle-alert":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"></path><path d=\"M12 9v4\"></path><path d=\"M12 17h.01\"></path></svg>","circle-check":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"m9 12 2 2 4-4\"></path></svg>","clock":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><polyline points=\"12 6 12 12 16 14\"></polyline></svg>","message-circle":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"></path></svg>","trash2":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"></path><path d=\"M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6\"></path><path d=\"M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2\"></path><line x1=\"10\" x2=\"10\" y1=\"11\" y2=\"17\"></line><line x1=\"14\" x2=\"14\" y1=\"11\" y2=\"17\"></line></svg>","pencil":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"></path><path d=\"m15 5 4 4\"></path></svg>","x":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 6 6 18\"></path><path d=\"m6 6 12 12\"></path></svg>","chevron-right":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m9 18 6-6-6-6\"></path></svg>","arrow-left":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m12 19-7-7 7-7\"></path><path d=\"M19 12H5\"></path></svg>","calendar":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8 2v4\"></path><path d=\"M16 2v4\"></path><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"></rect><path d=\"M3 10h18\"></path></svg>","scale":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"></path><path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"></path><path d=\"M7 21h10\"></path><path d=\"M12 3v18\"></path><path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\"></path></svg>","hammer":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9\"></path><path d=\"m18 15 4-4\"></path><path d=\"m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5\"></path></svg>","clipboard-list":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"></rect><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"></path><path d=\"M12 11h4\"></path><path d=\"M12 16h4\"></path><path d=\"M8 11h.01\"></path><path d=\"M8 16h.01\"></path></svg>","clipboard-check":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"></rect><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"></path><path d=\"m9 14 2 2 4-4\"></path></svg>","copy":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"></rect><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"></path></svg>","download":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"></path><polyline points=\"7 10 12 15 17 10\"></polyline><line x1=\"12\" x2=\"12\" y1=\"15\" y2=\"3\"></line></svg>","upload":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"></path><polyline points=\"17 8 12 3 7 8\"></polyline><line x1=\"12\" x2=\"12\" y1=\"3\" y2=\"15\"></line></svg>","truck":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2\"></path><path d=\"M15 18H9\"></path><path d=\"M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14\"></path><circle cx=\"17\" cy=\"18\" r=\"2\"></circle><circle cx=\"7\" cy=\"18\" r=\"2\"></circle></svg>","minus":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"></path></svg>","package":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z\"></path><path d=\"M12 22V12\"></path><path d=\"m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7\"></path><path d=\"m7.5 4.27 9 5.15\"></path></svg>","send":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"></path><path d=\"m21.854 2.147-10.94 10.939\"></path></svg>","info":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><path d=\"M12 16v-4\"></path><path d=\"M12 8h.01\"></path></svg>","hourglass":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 22h14\"></path><path d=\"M5 2h14\"></path><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"></path><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"></path></svg>","rotate-ccw":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"></path><path d=\"M3 3v5h5\"></path></svg>","circle-dot":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"></circle><circle cx=\"12\" cy=\"12\" r=\"1\"></circle></svg>","wrench":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\"></path></svg>"};
 
-/* DUVPAN Fabrika — imalat, kesim, hammadde ve sevkiyat takibi. Sürüm 2.
+/* DUVPAN Fabrika — imalat, kesim, hammadde ve sevkiyat takibi. Sürüm 4.
    Kayıtlar şimdilik bu cihazda (localStorage). Tüm yazma işlemleri commit() üzerinden geçer;
    ortak veritabanı bağlanınca yalnızca load/save katmanı değişecek. */
 (function () {
@@ -358,6 +379,96 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
   function locForMethod(m) { return m === 'lazer' ? 'lazerci' : m === 'plazma' ? 'plazmaci' : 'fabrika'; }
   function emptyLoc() { var o = {}; LOC_KEYS.forEach(function (k) { o[k] = 0; }); return o; }
 
+  // ---------- Hadde ürünleri (Sürüm 4) ----------
+  // Tür seçilir, sadece o türün ölçüleri sorulur. Aynı tür + ölçü + boy uzunluğu tek stok kalemidir; stok boy boy (sac plaka plaka) tutulur.
+  var HK = {
+    kare: { label: 'Kare / dikdörtgen profil', group: 'profil', unit: 'boy', f: ['ebat', 't', 'len'] },
+    boru: { label: 'Boru', group: 'boru', unit: 'boy', f: ['d', 't', 'len'] },
+    kosebent: { label: 'Köşebent', group: 'profil', unit: 'boy', f: ['ebat', 't', 'len'] },
+    npu: { label: 'NPU', group: 'profil', unit: 'boy', f: ['no', 'len'] },
+    lama: { label: 'Lama', group: 'profil', unit: 'boy', f: ['w', 't', 'len'] },
+    sac: { label: 'Sac', group: 'sac', unit: 'plaka', f: ['t', 'plaka'] }
+  };
+  var HK_F = {
+    ebat: { label: 'Ebat (mm)', ph: '40×40 veya 100×50', hint: 'Tek sayı yazarsanız kare/eşit kabul edilir.' },
+    d: { label: 'Çap (mm)', ph: 'Örn. 88,9' },
+    t: { label: 'Kalınlık (mm)', ph: 'Örn. 4' },
+    no: { label: 'NPU no', ph: 'Örn. 100', quick: [80, 100, 120, 140, 160] },
+    w: { label: 'Genişlik (mm)', ph: 'Örn. 50' },
+    len: { label: 'Boy uzunluğu (m)', ph: '6', quick: [6, 12] },
+    plaka: { label: 'Plaka ebadı (mm)', ph: '6000×1510' }
+  };
+  // NPU birim ağırlıkları (kg/m)
+  var NPU_KG = { 50: 5.59, 65: 7.09, 80: 8.64, 100: 10.6, 120: 13.4, 140: 16, 160: 18.8, 180: 22, 200: 25.3, 220: 29.4, 240: 33.2, 260: 37.9, 280: 41.8, 300: 46.2 };
+  // Liste grupları: hadde türleri ayrı, diğerleri malzeme grubuna göre
+  var SG = { kare: 'Kare / dikdörtgen profil', kosebent: 'Köşebent', npu: 'NPU', lama: 'Lama', profil: 'Profil', boru: 'Boru', sac: 'Sac', aksesuar: 'Aksesuar', diger: 'Diğer' };
+  function sgOf(m) {
+    var k = m.hk && m.hk.kind;
+    if (k && SG[k] && k !== 'sac' && k !== 'boru') return k;
+    return GROUPS[m.group] ? m.group : 'diger';
+  }
+  function dnum(v) { return Math.round(v * 100) / 100; }
+  function dtxt(v) { return String(dnum(v)).replace('.', ','); }
+  function pair(s) { var a = String(s || '').replace(/,/g, '.').split(/[^0-9.]+/).filter(Boolean).map(Number).filter(function (x) { return x > 0; }); return a; }
+  // Formdaki değerlerden ölçü nesnesi; eksik alan varsa { err: alan }
+  function hkRead(kind, v) {
+    var d = { kind: kind }, F = HK[kind].f;
+    for (var i = 0; i < F.length; i++) {
+      var k = F[i];
+      if (k === 'ebat' || k === 'plaka') {
+        var p = pair(v[k]);
+        if (!p.length || p.length > 2) return { err: k };
+        if (p.length === 1) p.push(p[0]);
+        p.sort(function (a, b) { return b - a; });
+        if (k === 'ebat') { d.a = dnum(p[0]); d.b = dnum(p[1]); } else { d.L = dnum(p[0]); d.W = dnum(p[1]); }
+      } else {
+        var n = num(v[k]);
+        if (!(n > 0)) return { err: k };
+        d[k] = dnum(n);
+      }
+    }
+    return d;
+  }
+  function hkKey(d) { return [d.kind, d.a, d.b, d.d, d.t, d.no, d.w, d.len, d.L, d.W].map(function (x) { return x == null ? '' : x; }).join('|'); }
+  function hkName(d) {
+    var t = dtxt(d.t);
+    switch (d.kind) {
+      case 'kare': return (d.a === d.b ? 'Kare profil ' : 'Dikdörtgen profil ') + dtxt(d.a) + '×' + dtxt(d.b) + '×' + t;
+      case 'boru': return 'Boru Ø' + dtxt(d.d) + '×' + t;
+      case 'kosebent': return 'Köşebent L' + dtxt(d.a) + '×' + dtxt(d.b) + '×' + t;
+      case 'npu': return 'NPU' + dtxt(d.no);
+      case 'lama': return 'Lama ' + dtxt(d.w) + '×' + t;
+      case 'sac': return 'Sac t' + t;
+    }
+    return '';
+  }
+  function hkSpec(d) { return d.kind === 'sac' ? dtxt(d.L) + '×' + dtxt(d.W) : dtxt(d.len) + ' m boy'; }
+  // 1 boy (sacda 1 plaka) yaklaşık ağırlığı, çelik 7,85 kg/dm³
+  function hkKg(d) {
+    var A = 0;
+    if (d.kind === 'kare') A = 2 * d.t * (d.a + d.b) - 4 * d.t * d.t;
+    else if (d.kind === 'boru') A = Math.PI * d.t * (d.d - d.t);
+    else if (d.kind === 'kosebent') A = d.t * (d.a + d.b - d.t);
+    else if (d.kind === 'lama') A = d.w * d.t;
+    else if (d.kind === 'sac') return Math.round(d.L * d.W * d.t * 7.85e-6 * 10) / 10;
+    var kgm = d.kind === 'npu' ? (NPU_KG[d.no] || 0) : A * 0.00785;
+    return kgm > 0 ? Math.round(kgm * d.len * 10) / 10 : '';
+  }
+  function hkFind(d) { var k = hkKey(d); return S.materials.find(function (m) { return m.hk && hkKey(m.hk) === k; }); }
+  // Bir boyun uzunluğu (m): hadde kaydından ya da "6 m boy" yazısından
+  function boyLen(m) {
+    if (m.hk && m.hk.len > 0) return m.hk.len;
+    var x = /(\d+(?:[.,]\d+)?)\s*m\s*boy/i.exec(m.spec || '');
+    return m.unit === 'boy' && x ? Number(x[1].replace(',', '.')) : 0;
+  }
+  // Yüklü hammaddelere hadde ölçüleri (adı değiştirilmemişse)
+  var HK_SEED = {
+    m_l80: ['L80×80×8', { kind: 'kosebent', a: 80, b: 80, t: 8, len: 6 }], m_l40: ['L40×40×4', { kind: 'kosebent', a: 40, b: 40, t: 4, len: 6 }],
+    m_npu100: ['NPU100', { kind: 'npu', no: 100, len: 6 }], m_npu80: ['NPU80', { kind: 'npu', no: 80, len: 6 }],
+    m_boru88: ['Boru Ø88,9×4', { kind: 'boru', d: 88.9, t: 4, len: 6 }],
+    m_sac10: ['Sac t10', { kind: 'sac', t: 10, L: 6000, W: 1510 }], m_sac15: ['Sac t15', { kind: 'sac', t: 15, L: 6000, W: 1510 }]
+  };
+
   // ---------- Veri ----------
   var LS_KEY = 'duvpan-fabrika-v1';
   var S = null;
@@ -382,7 +493,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       ],
       parts: [
         { id: 'p_dikme', name: 'Dikme sacı', spec: 't10 · plaka dikme', source: 'fason', method: 'lazer', leadDays: 3, materialId: 'm_sac10', perMaterial: 30, active: true },
-        { id: 'p_flans', name: 'Flanş 297', spec: '297×297×15', source: 'fason', method: 'lazer', leadDays: 3, materialId: 'm_sac15', perMaterial: 121, active: true },
+        { id: 'p_flans', name: 'Flanş 297', spec: '297×297×15', source: 'fason', method: 'lazer', leadDays: 3, materialId: 'm_sac15', perMaterial: 100, active: true },
         { id: 'p_manson', name: 'Manşon', spec: 'Ø139,7 · L=150', source: 'fabrika', method: 'testere', leadDays: 1, materialId: 'm_boru139', perMaterial: 39, active: true },
         { id: 'p_flans200', name: 'Flanş 200', spec: '200×200×10', source: 'fason', method: 'lazer', leadDays: 3, materialId: 'm_sac10', perMaterial: 0, active: true },
         { id: 'p_l80', name: 'Baba profili', spec: 'L80×80×8 · L=1200', source: 'fabrika', method: 'testere', leadDays: 1, materialId: 'm_l80', perMaterial: 5, pairWeld: true, active: true },
@@ -481,6 +592,13 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     return n;
   }
 
+  // Sürüm 4: 6000×1510 plakadan 297×297 flanş en fazla 100 adet çıkar (20×5); eski kayıttaki 121 düzeltilir.
+  function fixData(s) {
+    var changed = false;
+    (s.parts || []).forEach(function (p) { if (p.id === 'p_flans' && Number(p.perMaterial) === 121) { p.perMaterial = 100; changed = true; } });
+    (s.materials || []).forEach(function (m) { var hs = HK_SEED[m.id]; if (hs && !m.hk && m.name === hs[0]) { m.hk = Object.assign({}, hs[1]); changed = true; } });
+    return changed;
+  }
   function valid(s) {
     return !!(s && s.v === 3 && s.settings && Array.isArray(s.parts) && Array.isArray(s.products) && Array.isArray(s.projects) && Array.isArray(s.entries) && Array.isArray(s.materials));
   }
@@ -490,11 +608,12 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     if (raw) {
       try {
         var s = JSON.parse(raw);
-        if (s && (s.v === 1 || s.v === 2)) { s = migrate(s); S = s; save(); return; }
-        if (valid(s)) { S = s; return; }
+        if (s && (s.v === 1 || s.v === 2)) { s = migrate(s); fixData(s); S = s; save(); return; }
+        if (valid(s)) { S = s; if (fixData(s)) save(); return; }
       } catch (e) { /* bozuk kayıt: baştan başla */ }
     }
     S = seed();
+    fixData(S);
     save();
   }
   function save() {
@@ -1014,19 +1133,6 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       '<div class="btn-row" style="margin-top:12px">' + act + '<button class="btn" type="button" data-act="malzeme" data-mat="' + m.id + '">' + ic('package') + ' Malzeme geldi</button></div></article>';
   }
 
-  function chart7() {
-    var c = calc(), t = c.t, mainPr = mainProduct();
-    var days = prevWorkDays(t, 6, S.settings.sundayOff).concat([t]);
-    var vals = days.map(function (d) { var o = c.dailyAll[d] || {}; return mainPr ? (o[mainPr.id] || 0) : 0; });
-    var max = Math.max.apply(null, vals.concat([1]));
-    return '<div class="chart" role="img" aria-label="Son 7 iş günü biten ' + esc(mainPr ? mainPr.unit : '') + ': ' + days.map(function (d, i) { return fmtDay(d) + ' ' + vals[i]; }).join(', ') + '">' +
-      days.map(function (d, i) {
-        var h = Math.round(vals[i] / max * 70);
-        var cls = vals[i] === 0 ? 'colbar zero' : (d === t ? 'colbar today' : 'colbar');
-        return '<div class="col"><span class="cv">' + (vals[i] ? fmt(vals[i]) : '–') + '</span><div class="' + cls + '" style="height:' + Math.max(3, h) + 'px"></div>' +
-          '<span class="cl">' + (d === t ? 'Bugün' : esc(fmtShort(d))) + '</span></div>';
-      }).join('') + '</div>';
-  }
   function mainProduct() {
     var c = calc(), best = null, bestN = -1;
     S.products.forEach(function (pr) { if (c.rate[pr.id].producing) { var n = Object.keys(c.daily[pr.id] || {}).length; if (n > bestN) { best = pr; bestN = n; } } });
@@ -1082,33 +1188,78 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
   }
 
   // ---------- Pano ----------
+  // Proje ilerlemesi (tonaja göre; ağırlığı girilmemiş kalemler hesaba girmez, hiç ağırlık yoksa adede göre)
+  function projProgress(pj) {
+    var sh = calc().ship[pj.id] || emptyShip(), list = shipItems(pj, 'santiye').filter(function (it) { return it.target > 0; });
+    var byKg = list.some(function (it) { return it.weight > 0; });
+    var r = { imalat: [0, 0], galv: [0, 0], san: [0, 0] };
+    list.forEach(function (it) {
+      var w = byKg ? it.weight : 1, T = it.target;
+      if (!w) return;
+      if (it.prod) { r.imalat[0] += Math.min(T, producedOf(pj, it.prod.id)) * w; r.imalat[1] += T * w; }
+      if (it.galv) { r.galv[0] += Math.min(T, sh.gal[it.key] || 0) * w; r.galv[1] += T * w; }
+      r.san[0] += Math.min(T, sh.san[it.key] || 0) * w; r.san[1] += T * w;
+    });
+    function pc(x) { return x[1] > 0 ? x[0] / x[1] * 100 : null; }
+    return { imalat: pc(r.imalat), galv: pc(r.galv), san: pc(r.san), byKg: byKg };
+  }
+  function pctTxt(v) { return v >= 99.95 ? '100' : v > 0 && v < 1 ? '<1' : fmt(Math.floor(v)); }
+  function progressCard(pj) {
+    var g = projProgress(pj), li = projInfo(pj).main;
+    var stCls = { aktif: 's-amber', sirada: 's-blue', durdu: 's-gray', bitti: 's-green' }[pj.status] || 's-gray';
+    function row(label, v, cls) {
+      if (v == null) return '';
+      return '<div class="prog-row"><span>' + label + '</span><div class="bar ' + cls + '"><span style="width:' + Math.min(100, v).toFixed(1) + '%"></span></div><strong class="num">%' + pctTxt(v) + '</strong></div>';
+    }
+    return '<a class="card prog" href="#proje/' + pj.id + '" aria-label="' + esc(pj.name + ': İmalat %' + pctTxt(g.imalat || 0) + (g.galv != null ? ', Galvaniz %' + pctTxt(g.galv) : '') + ', Şantiye sevk %' + pctTxt(g.san || 0)) + '">' +
+      '<div class="row between"><div class="item-title grow">' + esc(pj.name) + '</div><span class="chip ' + stCls + '">' + esc(PSTATUS[pj.status] || '') + '</span></div>' +
+      (li ? '<div class="item-sub num">' + fmt(li.done) + ' / ' + fmt(li.target) + ' ' + esc(li.pr ? li.pr.unit : '') + ' üretildi' + (li.finish ? ' · bitiş ' + relDay(li.finish) : '') + '</div>' : '') +
+      '<div class="prog-rows">' + row('İmalat', g.imalat, '') + row('Galvaniz', g.galv, 'galv') + row('Şantiye sevk', g.san, 'green') + '</div></a>';
+  }
+
+  var panoFold = false;
   function viewPano() {
     var c = calc(), t = c.t, h = '';
     h += installBanner();
     if (!storageOk) h += '<div class="note">' + ic('info') + '<div><strong>Kayıtlar saklanamıyor.</strong> Bu tarayıcı kayıt tutmaya izin vermiyor; sayfa kapanınca girilenler silinir.</div></div>';
+
+    // Projeler: sade ilerleme özeti
+    var order = { aktif: 0, sirada: 1, durdu: 2 };
+    var live = S.projects.filter(function (p) { return p.status !== 'bitti'; }).sort(function (a, b) { return (order[a.status] || 0) - (order[b.status] || 0); });
+    var done = S.projects.length - live.length;
+    h += '<section class="sec" aria-labelledby="h-proje"><div class="sec-head"><h2 class="sec-title" id="h-proje">Projeler</h2><a class="link-btn" href="#projeler">' + (done ? 'Biten ' + done + ' · ' : '') + 'Tümü</a></div>' +
+      (live.length ? live.map(progressCard).join('') : '<div class="card"><div class="item-title">Süren proje yok</div><button class="btn primary block" type="button" data-act="project-new" style="margin-top:12px">' + ic('plus') + ' Proje ekle</button></div>') +
+      '<p class="tiny muted" style="margin:0 2px">Yüzdeler tonaja göre: imalat = üretilen, galvaniz = galvanize giden, şantiye sevk = şantiyeye giden (ek kalemler dahil; ağırlığı girilmemiş kalem hesaba girmez).</p></section>';
+
+    // Bugün (tek satır)
+    var todayAll = c.dailyAll[t] || {}, mp = mainProduct(), r = mp ? c.rate[mp.id] : null;
+    var todayParts = S.products.filter(function (pr) { return todayAll[pr.id]; }).map(function (pr) { return fmt(todayAll[pr.id]) + ' ' + pr.unit; });
+    h += '<div class="card row" style="padding:10px 12px"><span class="ico-dot t-imalat">' + ic('hammer') + '</span><div class="grow"><div class="item-title">Bugün ' + (todayParts.length ? esc(todayParts.join(' · ')) : 'imalat girilmedi') + '</div>' +
+      (r ? '<div class="item-sub">Ortalama ' + fmt(r.producing ? r.v : (r.hist || r.cap)) + ' ' + esc(mp.unit) + '/gün' + (r.n ? ' · son ' + r.n + ' üretim günü' : ' · kapasite') + '</div>' : '') + '</div>' +
+      '<button class="btn primary sm" type="button" data-act="imalat">' + ic('plus') + ' Gir</button></div>';
+
+    // Uyarılar: katlanır bölüm
+    var items = [], urgent = 0;
     var unk = unknownItems();
     if (unk.parts.length || unk.mats.length) {
-      h += '<div class="card" style="border-color:rgba(130,152,207,.6)"><div class="label">Başlangıç</div><div class="item-title" style="font-size:16px;margin-top:2px">Mevcut stokları girin</div>' +
+      items.push('<div class="card" style="border-color:rgba(130,152,207,.6)"><div class="item-title">Mevcut stokları girin</div>' +
         '<div class="item-sub">' + (unk.parts.length ? fmt(unk.parts.length) + ' parçanın' : '') + (unk.parts.length && unk.mats.length ? ' ve ' : '') + (unk.mats.length ? fmt(unk.mats.length) + ' malzemenin' : '') +
         ' fabrikadaki miktarı henüz girilmedi. Sayınca uyarılar ve "kaç günlük kaldı" hesabı başlar.</div>' +
-        '<button class="btn primary block" type="button" data-act="toplu-sayim" style="margin-top:12px">' + ic('clipboard-check') + ' Başlangıç sayımını gir</button></div>';
+        '<button class="btn primary block" type="button" data-act="toplu-sayim" style="margin-top:12px">' + ic('clipboard-check') + ' Başlangıç sayımını gir</button></div>');
     }
-
-    // Acil uyarılar
     var pa = S.parts.map(function (p) { return c.fc[p.id]; }).filter(function (f) { return URGENT[f.status]; });
     var ma = S.materials.map(function (m) { return c.mfc[m.id]; }).filter(function (f) { return URGENT[f.status]; });
-    var all = pa.map(function (f) { return { s: SEV[f.status], d: f.daysLeft, html: partAlert(f) }; }).concat(ma.map(function (f) { return { s: SEV[f.status], d: f.daysLeft, html: matAlert(f) }; }))
-      .sort(function (a, b) { return a.s - b.s || a.d - b.d; });
-    var extra = '';
+    pa.map(function (f) { return { s: SEV[f.status], d: f.daysLeft, html: partAlert(f) }; }).concat(ma.map(function (f) { return { s: SEV[f.status], d: f.daysLeft, html: matAlert(f) }; }))
+      .sort(function (a, b) { return a.s - b.s || a.d - b.d; }).forEach(function (x) { if (x.s <= SEV.gec) urgent++; items.push(x.html); });
     // Sıradaki işler için alınacak malzeme (tek kartta)
     var buy = S.materials.map(function (m) { return c.mfc[m.id]; }).filter(function (f) { return f.status === 'eksik' || (f.status === 'yeterli' && f.shortage > 0); });
     if (buy.length) {
-      extra += '<div class="card tight"><div style="padding:12px 14px 6px"><div class="label">Alınacak malzeme</div><div class="item-sub">Sıradaki ve süren işler için stokta olmayan miktar (siparişte olan düşüldü)</div></div>' +
+      items.push('<div class="card tight"><div style="padding:12px 14px 6px"><div class="label">Alınacak malzeme</div><div class="item-sub">Sıradaki ve süren işler için stokta olmayan miktar (siparişte olan düşüldü)</div></div>' +
         '<div class="list">' + buy.map(function (f) {
           return '<button class="item" type="button" data-act="siparis" data-mat="' + f.m.id + '"><div class="grow"><div class="item-title">' + esc(f.m.name) + '</div>' +
             '<div class="item-sub num">Gereken ' + fmtQ(f.need) + ' · stokta ' + fmtQ(f.have) + (f.incoming ? ' · siparişte ' + fmtQ(f.incoming) : '') + '</div></div>' +
             '<span class="chip s-amber num">' + fmtQ(f.shortage) + ' ' + esc(f.m.unit) + '</span><span class="chev">' + ic('chevron-right') + '</span></button>';
-        }).join('') + '</div></div>';
+        }).join('') + '</div></div>');
     }
     // Tartım hatırlatma ve tolerans dışı
     S.products.forEach(function (pr) {
@@ -1116,42 +1267,29 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       var lw = c.lastWeigh[pr.id], since = c.sinceWeigh[pr.id] || 0, every = Number(pr.weighEvery) || 0;
       if (lw) {
         var tc = tartimCheck(lw.e);
-        if (tc && tc.target && !tc.ok && lw.e.date >= addDays(t, -7)) extra += '<div class="card warn row"><span style="color:var(--red)">' + ic('scale') + '</span><div class="grow"><div class="item-title">Son tartım tolerans dışı · ' + esc(pr.name) + '</div><div class="item-sub">' + fmt1(tc.w) + ' kg · hedef ' + esc(tolText(pr)) + ' · ' + relDay(lw.e.date) + '</div></div></div>';
+        if (tc && tc.target && !tc.ok && lw.e.date >= addDays(t, -7)) { urgent++; items.push('<div class="card warn row"><span style="color:var(--red)">' + ic('scale') + '</span><div class="grow"><div class="item-title">Son tartım tolerans dışı · ' + esc(pr.name) + '</div><div class="item-sub">' + fmt1(tc.w) + ' kg · hedef ' + esc(tolText(pr)) + ' · ' + relDay(lw.e.date) + '</div></div></div>'); }
       }
       if (every && c.rate[pr.id].producing && ((!lw && since > 0) || since >= every)) {
-        extra += '<div class="card row"><span style="color:var(--amber)">' + ic('scale') + '</span><div class="grow"><div class="item-title">Tartım zamanı · ' + esc(pr.name) + '</div><div class="item-sub">' +
-          (lw ? 'Son tartımdan beri ' + fmt(since) + ' ' + esc(pr.unit) + ' üretildi (her ' + fmt(every) + ' ' + esc(pr.unit) + 'da bir).' : 'Henüz tartım girilmedi. İlk ' + esc(pr.unit) + ' tartılmalı.') + ' Biten imalatı girerken "Detay ekle" → Tartım.</div></div></div>';
+        items.push('<div class="card row"><span style="color:var(--amber)">' + ic('scale') + '</span><div class="grow"><div class="item-title">Tartım zamanı · ' + esc(pr.name) + '</div><div class="item-sub">' +
+          (lw ? 'Son tartımdan beri ' + fmt(since) + ' ' + esc(pr.unit) + ' üretildi (her ' + fmt(every) + ' ' + esc(pr.unit) + 'da bir).' : 'Henüz tartım girilmedi. İlk ' + esc(pr.unit) + ' tartılmalı.') + ' Biten imalatı girerken "Detay ekle" → Tartım.</div></div></div>');
       }
     });
     // Eksik kantar fişleri
     var missing = [];
     Object.keys(c.ship).forEach(function (k) { (c.ship[k].missing || []).forEach(function (e) { missing.push(e); }); });
     if (missing.length) {
-      extra += '<button class="card row" type="button" data-act="entry" data-id="' + missing[0].id + '" style="text-align:left;width:100%"><span style="color:var(--amber)">' + ic('receipt') + '</span><div class="grow"><div class="item-title">Şantiye kantar fişi eksik</div>' +
-        '<div class="item-sub">' + fmt(missing.length) + ' seferin kantar kilosu girilmedi. Hakediş kantara göre yapıldığı için fişi girin.</div></div><span class="chev">' + ic('chevron-right') + '</span></button>';
+      items.push('<button class="card row" type="button" data-act="entry" data-id="' + missing[0].id + '" style="text-align:left;width:100%"><span style="color:var(--amber)">' + ic('receipt') + '</span><div class="grow"><div class="item-title">Şantiye kantar fişi eksik</div>' +
+        '<div class="item-sub">' + fmt(missing.length) + ' seferin kantar kilosu girilmedi. Hakediş kantara göre yapıldığı için fişi girin.</div></div><span class="chev">' + ic('chevron-right') + '</span></button>');
     }
-    if (all.length || extra) {
-      h += '<section class="sec" aria-labelledby="h-uyari"><div class="sec-head"><h2 class="sec-title" id="h-uyari">Uyarılar</h2></div>' + all.map(function (x) { return x.html; }).join('') + extra + '</section>';
-    } else if (!(unk.parts.length || unk.mats.length)) {
-      h += '<div class="card row"><span style="color:var(--green)">' + ic('circle-check') + '</span><div class="grow"><div class="item-title">Acil bir durum yok</div><div class="item-sub">Parça ve malzeme stokları işlere yetiyor.</div></div></div>';
+    if (items.length) {
+      h += '<section class="sec" aria-labelledby="h-uyari"><button class="card row fold-head" type="button" data-act="pano-fold" aria-expanded="' + panoFold + '" aria-controls="uyari-body" id="h-uyari">' +
+        '<span style="color:' + (urgent ? 'var(--red)' : 'var(--amber)') + '">' + ic('info') + '</span><div class="grow"><div class="item-title">Uyarılar</div><div class="item-sub">' +
+        (urgent ? fmt(urgent) + ' acil · ' : '') + fmt(items.length) + ' konu · görmek için dokunun</div></div>' +
+        (urgent ? '<span class="chip s-red">' + fmt(urgent) + ' acil</span>' : '<span class="chip s-amber">' + fmt(items.length) + '</span>') + '<span class="chev fold-chev">' + ic('chevron-right') + '</span></button>' +
+        '<div class="stack" id="uyari-body"' + (panoFold ? '' : ' hidden') + '>' + items.join('') + '</div></section>';
+    } else {
+      h += '<div class="card row"><span style="color:var(--green)">' + ic('circle-check') + '</span><div class="grow"><div class="item-title">Uyarı yok</div><div class="item-sub">Parça ve malzeme stokları işlere yetiyor.</div></div></div>';
     }
-
-    // Bugün
-    var mp = mainProduct(), todayAll = c.dailyAll[t] || {};
-    var todayParts = S.products.filter(function (pr) { return todayAll[pr.id]; }).map(function (pr) { return fmt(todayAll[pr.id]) + ' ' + pr.unit; });
-    var r = mp ? c.rate[mp.id] : null;
-    h += '<section class="sec" aria-labelledby="h-bugun"><div class="sec-head"><h2 class="sec-title" id="h-bugun">Bugün</h2><span class="sec-meta">' + esc(cap(fmtLong(t))) + '</span></div>' +
-      '<div class="card"><div class="row between" style="align-items:flex-end"><div><div class="label">Biten imalat</div>' +
-      '<div class="big">' + fmt(mp ? (todayAll[mp.id] || 0) : 0) + '<span class="unit">' + esc(mp ? mp.unit : '') + '</span></div>' +
-      (todayParts.length > 1 ? '<div class="tiny muted">' + esc(todayParts.join(' · ')) + '</div>' : '') + '</div>' +
-      (r ? '<div style="text-align:right"><div class="label">Ortalama hız</div><div class="mid">' + fmt(r.producing ? r.v : (r.hist || r.cap)) + '<span class="unit">/gün</span></div>' +
-        '<div class="tiny muted">' + (r.n ? 'son ' + r.n + ' üretim günü' : 'günlük kapasite') + '</div></div>' : '') + '</div>' + chart7() +
-      '<button class="btn primary block" type="button" data-act="imalat" style="margin-top:14px">' + ic('plus') + ' Biten imalat gir</button></div></section>';
-
-    // Projeler
-    var live = liveProjects();
-    h += '<section class="sec" aria-labelledby="h-proje"><div class="sec-head"><h2 class="sec-title" id="h-proje">Projeler</h2><a class="link-btn" href="#projeler">Tümü</a></div>' +
-      (live.length ? live.map(function (pj) { return projectCard(pj); }).join('') : '<div class="card"><div class="item-title">Süren proje yok</div><button class="btn primary block" type="button" data-act="project-new" style="margin-top:12px">' + ic('plus') + ' Proje ekle</button></div>') + '</section>';
 
     h += '<p class="tiny muted" style="text-align:center;margin:0">Kayıtlar bu cihazda saklanıyor. Yedek için Ayarlar → Veri.</p>';
     return h;
@@ -1243,87 +1381,106 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       '<button class="btn sm" type="button" data-act="mat-history" data-mat="' + m.id + '">' + ic('history') + ' Hareketler</button></div></div></article>';
   }
 
-  // Genel stok satırı (işlerde kullanılmayan kalemler için sade görünüm)
+  // Kompakt stok satırı: ad, ölçü, miktar; sadece gerekiyorsa konum ve durum
   function matRow(m) {
-    var c = calc(), st = c.mstock[m.id], known = c.mknown[m.id], lt = locTxt(m.id, false);
-    return '<button class="item" type="button" data-act="mat-sheet" data-mat="' + m.id + '"><span class="ico-dot t-malzeme">' + ic('package') + '</span>' +
-      '<div class="grow"><div class="item-title">' + esc(m.name) + ' <span class="muted small">' + esc(matSpec(m)) + '</span></div>' +
-      '<div class="item-sub">' + (known ? esc(lt || 'Stok yok') : 'Sayılmadı') + (m.note ? ' · ' + esc(m.note) : '') + (m.track ? '' : ' · takip yok') + '</div></div>' +
-      '<span class="num" style="font-weight:800;white-space:nowrap">' + (known ? fmtQ(st) : '–') + ' <span class="muted small">' + esc(m.unit) + '</span></span></button>';
+    var c = calc(), st = c.mstock[m.id], known = c.mknown[m.id], f = c.mfc[m.id], L = boyLen(m);
+    var lt = locTxt(m.id, false), onlyFab = !lt || lt.indexOf('Fabrika') === 0 && lt.indexOf('·') < 0;
+    var sub = [];
+    if (!known) sub.push('Sayılmadı' + (f.need > 1e-9 && m.track ? ' · işler için ' + fmtQ(f.need) + ' ' + esc(m.unit) + ' gerekli' : ''));
+    else if (!onlyFab) sub.push(esc(lt));
+    if (known && f.need > 1e-9 && m.track && STC[f.status] && f.status !== 'tamam' && f.status !== 'bos') sub.push('<span class="chip ' + STC[f.status].cls + '">' + esc(matStatusLabel(f)) + (f.shortage > 0 ? ' ' + fmtQ(f.shortage) : '') + '</span>');
+    if (m.note) sub.push(esc(m.note));
+    var extra = known && st > 0 ? (L ? fmt1(st * L) + ' m' : '') + (m.kgPerUnit ? (L ? ' · ' : '') + '≈ ' + fmt(st * m.kgPerUnit) + ' kg' : '') : '';
+    return '<button class="item cmp" type="button" data-act="mat-sheet" data-mat="' + m.id + '">' +
+      '<div class="grow" style="min-width:0"><div class="item-title">' + esc(m.name) + ' <span class="muted small">' + esc(matSpec(m)) + '</span></div>' +
+      (sub.length ? '<div class="item-sub">' + sub.join(' · ') + '</div>' : '') + '</div>' +
+      '<div class="qty">' + (known ? fmtQ(st) : '–') + '<span class="u">' + esc(m.unit) + '</span>' + (extra ? '<span class="s">' + esc(extra) + '</span>' : '') + '</div></button>';
   }
   function matSheet(mid) {
     var m = material(mid); if (!m) return;
-    var c = calc(), l = c.mloc[mid], f = c.mfc[mid];
+    var c = calc(), l = c.mloc[mid], f = c.mfc[mid], L = boyLen(m);
     var rows = LOC_KEYS.map(function (k) { return '<tr><td>' + LOCS[k] + '</td><td>' + fmtQ(l[k]) + ' ' + esc(m.unit) + (m.kgPerUnit && l[k] > 0 ? ' <span class="muted small">≈ ' + fmt(l[k] * m.kgPerUnit) + ' kg</span>' : '') + '</td></tr>'; }).join('') +
-      '<tr><td><strong>Toplam</strong></td><td><strong>' + fmtQ(c.mstock[mid]) + ' ' + esc(m.unit) + '</strong></td></tr>';
-    openSheet(m.name, '<div class="form"><div class="item-sub">' + esc([GROUPS[m.group] || 'Diğer', matSpec(m), m.note].filter(Boolean).join(' · ')) + (c.mknown[mid] ? '' : ' · henüz sayılmadı') + '</div>' +
-      '<div class="card tight"><table class="table"><tbody>' + rows + '</tbody></table></div>' +
-      (f.need > 0 ? '<p class="small muted" style="margin:0">İşler için gereken ' + fmtQ(f.need) + ' ' + esc(m.unit) + ' · ' + esc(matStatusLabel(f)) + '</p>' : '<p class="small muted" style="margin:0">Şu an hiçbir işte kullanılmıyor (genel stok).</p>') +
-      '<div class="btn-row"><button class="btn primary" type="button" data-act="malzeme" data-mat="' + mid + '">' + ic('package') + ' Geldi</button><button class="btn" type="button" data-act="transfer" data-mat="' + mid + '">' + ic('truck') + ' Transfer</button></div>' +
-      '<div class="btn-row"><button class="btn" type="button" data-act="sayim" data-mat="' + mid + '">' + ic('clipboard-check') + ' Sayım</button><button class="btn" type="button" data-act="siparis" data-mat="' + mid + '">' + ic('send') + ' Sipariş</button></div>' +
+      '<tr><td><strong>Toplam</strong></td><td><strong>' + fmtQ(c.mstock[mid]) + ' ' + esc(m.unit) + '</strong>' + (L && c.mstock[mid] > 0 ? ' <span class="muted small">' + fmt1(c.mstock[mid] * L) + ' m</span>' : '') + (m.kgPerUnit && c.mstock[mid] > 0 ? ' <span class="muted small">≈ ' + fmt(c.mstock[mid] * m.kgPerUnit) + ' kg</span>' : '') + '</td></tr>';
+    var info = f.need > 0
+      ? '<p class="small muted" style="margin:0">İşler için gereken ' + fmtQ(f.need) + ' ' + esc(m.unit) + (f.incoming ? ' · siparişte ' + fmtQ(f.incoming) : '') + (f.shortage > 0 ? ' · eksik ' + fmtQ(f.shortage) : '') + ' · <span class="chip ' + STC[f.status].cls + '">' + esc(matStatusLabel(f)) + '</span></p>'
+      : '<p class="small muted" style="margin:0">Şu an hiçbir işte kullanılmıyor (genel stok).</p>';
+    openSheet(m.name, '<div class="form"><div class="item-sub">' + esc([SG[sgOf(m)], matSpec(m), m.kgPerUnit ? '≈ ' + fmt1(m.kgPerUnit) + ' kg/' + m.unit : '', m.note].filter(Boolean).join(' · ')) + (c.mknown[mid] ? '' : ' · henüz sayılmadı') + '</div>' +
+      '<div class="card tight"><table class="table"><tbody>' + rows + '</tbody></table></div>' + info +
+      '<div class="btn-row"><button class="btn primary" type="button" data-act="malzeme" data-mat="' + mid + '">' + ic('package') + ' Geldi</button><button class="btn" type="button" data-act="sayim" data-mat="' + mid + '">' + ic('clipboard-check') + ' Sayım</button></div>' +
+      '<div class="btn-row"><button class="btn" type="button" data-act="siparis" data-mat="' + mid + '">' + ic('send') + ' Sipariş</button><button class="btn" type="button" data-act="transfer" data-mat="' + mid + '">' + ic('truck') + ' Transfer</button></div>' +
       '<div class="btn-row"><button class="btn sm" type="button" data-act="mat-edit" data-mat="' + mid + '">' + ic('pencil') + ' Düzenle</button><button class="btn sm" type="button" data-act="mat-history" data-mat="' + mid + '">' + ic('history') + ' Hareketler</button></div></div>');
+  }
+  // Liste sırası: grup sırası, sonra ad (sayılar doğal sırada)
+  function matSort(a, b) {
+    var ks = Object.keys(SG), d = ks.indexOf(sgOf(a)) - ks.indexOf(sgOf(b));
+    return d || String(a.name).localeCompare(String(b.name), 'tr', { numeric: true }) || (boyLen(a) - boyLen(b)) || String(a.spec).localeCompare(String(b.spec), 'tr', { numeric: true });
   }
 
   // ---------- Stok kontrol paylaş (WhatsApp / kopyala / yazdır) ----------
   var shareOpt = null;
   function shareRows(o) {
     var c = calc(), groups = [];
-    Object.keys(GROUPS).forEach(function (g) {
+    Object.keys(SG).forEach(function (g) {
       if (o.groups.indexOf(g) < 0) return;
-      var items = S.materials.filter(function (m) { return m.active !== false && (GROUPS[m.group] ? m.group : 'diger') === g; }).map(function (m) {
-        var known = !!c.mknown[m.id], q = o.loc ? c.mloc[m.id][o.loc] : c.mstock[m.id];
-        return { m: m, name: m.name, spec: m.spec || '', thick: m.thick || '', q: q, known: known, unit: m.unit, kg: m.kgPerUnit && q > 0 ? q * m.kgPerUnit : 0,
-          where: o.loc ? '' : locTxt(m.id), note: m.note || '' };
+      var items = S.materials.filter(function (m) { return m.active !== false && sgOf(m) === g; }).sort(matSort).map(function (m) {
+        var known = !!c.mknown[m.id], q = o.loc ? c.mloc[m.id][o.loc] : c.mstock[m.id], f = c.mfc[m.id], L = boyLen(m);
+        return { m: m, name: m.name, spec: m.spec || '', thick: m.thick || '', q: q, known: known, unit: m.unit, kg: m.kgPerUnit && q > 0 ? q * m.kgPerUnit : 0, len: L, meters: L && q > 0 ? q * L : 0,
+          where: o.loc ? '' : locTxt(m.id), note: m.note || '', need: m.track ? f.need : 0, incoming: f.incoming, shortage: m.track ? f.shortage : 0 };
       }).filter(function (x) { return o.zero ? true : (x.known && Math.abs(x.q) > 1e-9); });
-      if (items.length) groups.push({ title: GROUPS[g], items: items });
+      if (items.length) groups.push({ title: SG[g], items: items });
     });
     if (o.parts && (!o.loc || o.loc === 'fabrika')) {
       var items = S.parts.filter(function (p) { return p.active !== false; }).map(function (p) {
-        return { name: p.name, spec: p.spec || '', thick: '', q: c.stock[p.id], known: !!c.known[p.id], unit: 'adet', kg: 0, where: '', note: '' };
+        return { name: p.name, spec: p.spec || '', thick: '', q: c.stock[p.id], known: !!c.known[p.id], unit: 'adet', kg: 0, meters: 0, where: '', note: '', need: c.fc[p.id].need, incoming: 0, shortage: 0 };
       }).filter(function (x) { return o.zero ? true : (x.known && Math.abs(x.q) > 1e-9); });
       if (items.length) groups.push({ title: 'Kesilmiş parçalar (fabrika)', items: items });
     }
     return groups;
   }
+  // Ayrıntılı metin: her kalemde adet, toplam metre, ağırlık, konum, ihtiyaç; grup ve genel tonaj
   function shareText(o) {
-    var groups = shareRows(o), n = 0;
-    var lines = ['*' + (S.settings.company || 'DUVPAN') + ' Fabrika · Stok kontrol listesi*', cap(fmtLong(today())) + (o.loc ? ' · ' + cap(locIn(o.loc)) + 'ki stok' : '') + (S.settings.user ? ' · ' + S.settings.user : '')];
+    var groups = shareRows(o), n = 0, totKg = 0;
+    var lines = ['*' + (S.settings.company || 'DUVPAN') + ' Fabrika · Stok listesi*', cap(fmtLong(today())) + (o.loc ? ' · ' + cap(locIn(o.loc)) + 'ki stok' : ' · tüm konumlar') + (S.settings.user ? ' · ' + S.settings.user : '')];
     groups.forEach(function (g) {
-      lines.push('', '*' + g.title.toLocaleUpperCase('tr-TR') + '*');
+      var gKg = g.items.reduce(function (a, x) { return a + x.kg; }, 0);
+      totKg += gKg;
+      lines.push('', '*' + g.title.toLocaleUpperCase('tr-TR') + '*' + (gKg ? ' (≈ ' + fmt(gKg) + ' kg)' : ''));
       g.items.forEach(function (x) {
         n++;
         var sp = [x.spec, x.thick && x.name.indexOf(x.thick) < 0 ? 't' + x.thick : ''].filter(Boolean).join(' · ');
-        lines.push('• ' + x.name + (sp ? ' (' + sp + ')' : '') + ': ' + (x.known ? fmtQ(x.q) + ' ' + x.unit : 'sayılmadı') + (x.kg ? ' ≈ ' + fmt(x.kg) + ' kg' : ''));
-        if (x.where && x.where.indexOf('·') > 0) lines.push('   ' + x.where);
-        else if (x.where && x.where.indexOf('Fabrika') !== 0) lines.push('   ' + x.where);
+        var det = [x.meters ? fmt1(x.meters) + ' m' : '', x.kg ? '≈ ' + fmt(x.kg) + ' kg' : ''].filter(Boolean).join(' · ');
+        lines.push('• ' + x.name + (sp ? ' (' + sp + ')' : '') + ': ' + (x.known ? '*' + fmtQ(x.q) + ' ' + x.unit + '*' : 'sayılmadı') + (det ? ' — ' + det : ''));
+        if (x.where && (x.where.indexOf('·') > 0 || x.where.indexOf('Fabrika') !== 0)) lines.push('   Konum: ' + x.where);
+        if (x.need > 1e-9) lines.push('   İşler için gereken ' + fmtQ(x.need) + ' ' + x.unit + (x.incoming ? ' · siparişte ' + fmtQ(x.incoming) : '') + (x.shortage > 0 ? ' · eksik ' + fmtQ(x.shortage) : ''));
         if (x.note) lines.push('   Not: ' + x.note);
       });
     });
     if (!n) lines.push('', 'Seçilen filtrede stok yok.');
-    else lines.push('', 'Toplam ' + fmt(n) + ' kalem. Kontrol edip farkı bildirin.');
+    else lines.push('', 'Toplam ' + fmt(n) + ' kalem' + (totKg ? ' · ≈ ' + fmt(totKg) + ' kg' : '') + '. Kontrol edip farkı bildirin.');
     return lines.join('\n');
   }
   function shareHtml(o) {
     var groups = shareRows(o);
-    return '<h1>' + esc((S.settings.company || 'DUVPAN') + ' Fabrika · Stok kontrol listesi') + '</h1><p>' + esc(cap(fmtLong(today())) + (o.loc ? ' · ' + LOCS[o.loc] : ' · tüm konumlar')) + '</p>' +
+    return '<h1>' + esc((S.settings.company || 'DUVPAN') + ' Fabrika · Stok listesi') + '</h1><p>' + esc(cap(fmtLong(today())) + (o.loc ? ' · ' + LOCS[o.loc] : ' · tüm konumlar')) + '</p>' +
       groups.map(function (g) {
-        return '<h2>' + esc(g.title) + '</h2><table><thead><tr><th>Kalem</th><th>Ölçü</th><th>Kalınlık</th><th>Sistemde</th><th>Konum</th><th>Sayılan</th><th>Not</th></tr></thead><tbody>' +
-          g.items.map(function (x) { return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.spec) + '</td><td>' + esc(x.thick) + '</td><td class="r">' + (x.known ? esc(fmtQ(x.q) + ' ' + x.unit) : 'sayılmadı') + '</td><td>' + esc(x.where) + '</td><td class="box"></td><td>' + esc(x.note) + '</td></tr>'; }).join('') + '</tbody></table>';
+        return '<h2>' + esc(g.title) + '</h2><table><thead><tr><th>Kalem</th><th>Ölçü</th><th>Kalınlık</th><th>Sistemde</th><th>Metre / kg</th><th>Konum</th><th>Sayılan</th><th>Not</th></tr></thead><tbody>' +
+          g.items.map(function (x) { return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.spec) + '</td><td>' + esc(x.thick) + '</td><td class="r">' + (x.known ? esc(fmtQ(x.q) + ' ' + x.unit) : 'sayılmadı') + '</td><td class="r">' + esc([x.meters ? fmt1(x.meters) + ' m' : '', x.kg ? fmt(x.kg) + ' kg' : ''].filter(Boolean).join(' · ')) + '</td><td>' + esc(x.where) + '</td><td class="box"></td><td>' + esc(x.note) + '</td></tr>'; }).join('') + '</tbody></table>';
       }).join('') + (groups.length ? '' : '<p>Seçilen filtrede stok yok.</p>') + '<p class="foot">Sayan: ____________ &nbsp; İmza: ____________</p>';
   }
   function readShareOpt(sh) {
     var groups = Array.prototype.filter.call(sh.querySelectorAll('input[name=sg]'), function (x) { return x.checked; }).map(function (x) { return x.value; });
     return { groups: groups, loc: radioVal(sh, 'sloc', ''), parts: sh.querySelector('input[name=sparts]').checked, zero: sh.querySelector('input[name=szero]').checked };
   }
+  function presentSG() { var have = {}; S.materials.forEach(function (m) { if (m.active !== false) have[sgOf(m)] = true; }); return Object.keys(SG).filter(function (g) { return have[g]; }); }
   function stokShare() {
-    var o = shareOpt || { groups: stokGroup ? [stokGroup] : Object.keys(GROUPS), loc: '', parts: false, zero: false };
+    var o = shareOpt || { groups: stokGroup ? [stokGroup] : Object.keys(SG), loc: '', parts: false, zero: false };
     var chk = function (name, val, on, label) { return '<label class="row" style="min-height:40px;gap:10px"><input type="checkbox" name="' + name + '" value="' + val + '"' + (on ? ' checked' : '') + ' style="width:20px;height:20px;accent-color:var(--primary)"><span>' + label + '</span></label>'; };
     var locs = { '': 'Tümü' }; LOC_KEYS.forEach(function (k) { locs[k] = LOCS[k]; });
-    openSheet('Stok kontrol paylaş', '<div class="form">' +
-      '<div class="field"><span class="flabel">Gruplar</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:0 10px">' + Object.keys(GROUPS).map(function (g) { return chk('sg', g, o.groups.indexOf(g) >= 0, GROUPS[g]); }).join('') + '</div></div>' +
+    openSheet('Stok listesini paylaş', '<div class="form">' +
+      '<div class="field"><span class="flabel">Gruplar</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:0 10px">' + presentSG().map(function (g) { return chk('sg', g, o.groups.indexOf(g) >= 0, SG[g]); }).join('') + '</div></div>' +
       '<div class="field"><span class="flabel">Konum</span>' + segRadios('sloc', locs, o.loc) + '</div>' +
       chk('sparts', '1', o.parts, 'Kesilmiş parçaları da ekle (manşon, profil, flanş…)') + chk('szero', '1', o.zero, 'Sıfır ve sayılmamış kalemleri de göster') +
-      '<div class="field"><span class="flabel">Önizleme</span><textarea id="share-text" readonly style="min-height:200px"></textarea></div>' +
+      '<div class="field"><span class="flabel">Önizleme (ayrıntılı)</span><textarea id="share-text" readonly style="min-height:200px"></textarea></div>' +
       '<button class="btn wa block" type="button" data-act="share-wa">' + ic('message-circle') + ' WhatsApp\'ta gönder</button>' +
       '<div class="btn-row"><button class="btn" type="button" data-act="share-copy">' + ic('copy') + ' Kopyala</button><button class="btn" type="button" data-act="share-print">' + ic('download') + ' Yazdır / PDF</button></div></div>',
       function (sh) {
@@ -1332,7 +1489,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       });
   }
   function shareDo(how) {
-    var o = shareOpt || { groups: Object.keys(GROUPS), loc: '', parts: false, zero: false }, text = shareText(o);
+    var o = shareOpt || { groups: Object.keys(SG), loc: '', parts: false, zero: false }, text = shareText(o);
     if (how === 'wa') { openWa(text, ''); return; }
     if (how === 'copy') {
       var ta = document.getElementById('share-text');
@@ -1367,26 +1524,25 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       h += '<div class="note">' + ic('info') + '<div>"Sırada" olan projelerin parçaları. Henüz üretime başlanmadığı için gün değil, eksik adet gösterilir.</div></div>';
       h += later.length ? later.map(partCard).join('') : '<div class="card empty">Sıradaki işler için parça ihtiyacı yok.</div>';
     } else {
-      h += '<div class="btn-row"><button class="btn wa" type="button" data-act="stok-share">' + ic('message-circle') + ' Stok kontrol paylaş</button>' +
-        '<button class="btn" type="button" data-act="transfer">' + ic('truck') + ' Transfer</button></div>';
-      var gs = Object.keys(GROUPS).filter(function (g) { return allMats.some(function (m) { return (GROUPS[m.group] ? m.group : 'diger') === g; }); });
+      h += '<div class="btn-row"><button class="btn primary" type="button" data-act="hadde">' + ic('plus') + ' Malzeme girişi</button>' +
+        '<button class="btn wa" type="button" data-act="stok-share">' + ic('message-circle') + ' Paylaş</button></div>';
+      var gs = Object.keys(SG).filter(function (g) { return allMats.some(function (m) { return sgOf(m) === g; }); });
+      if (stokGroup && gs.indexOf(stokGroup) < 0) stokGroup = '';
       h += '<div class="filter" role="group" aria-label="Malzeme grubu"><button type="button" data-act="stok-group" data-f="" aria-pressed="' + (!stokGroup) + '">Tümü</button>' +
-        gs.map(function (g) { return '<button type="button" data-act="stok-group" data-f="' + g + '" aria-pressed="' + (stokGroup === g) + '">' + GROUPS[g] + '</button>'; }).join('') + '</div>';
-      var inG = allMats.filter(function (m) { return !stokGroup || (GROUPS[m.group] ? m.group : 'diger') === stokGroup; });
-      var used = inG.filter(function (m) { return m.track && c.mfc[m.id].need > 1e-9; }).map(function (m) { return c.mfc[m.id]; }).sort(function (a, b) { return SEV[a.status] - SEV[b.status]; });
-      var gen = inG.filter(function (m) { return !(m.track && c.mfc[m.id].need > 1e-9); });
-      if (used.length) h += '<div class="sec-head"><h2 class="sec-title">İşlerde kullanılan</h2><span class="sec-meta">' + used.length + '</span></div>' + used.map(matCard).join('');
-      if (gen.length) {
-        h += '<div class="sec-head"><h2 class="sec-title">Genel stok</h2><span class="sec-meta">' + gen.length + ' kalem</span></div>';
-        (stokGroup ? [stokGroup] : Object.keys(GROUPS)).forEach(function (g) {
-          var list = gen.filter(function (m) { return (GROUPS[m.group] ? m.group : 'diger') === g; });
-          if (list.length) h += '<div class="label" style="margin:2px 2px -6px">' + GROUPS[g] + '</div><div class="card tight list">' + list.map(matRow).join('') + '</div>';
-        });
-      }
+        gs.map(function (g) { return '<button type="button" data-act="stok-group" data-f="' + g + '" aria-pressed="' + (stokGroup === g) + '">' + SG[g] + '</button>'; }).join('') + '</div>';
+      var inG = allMats.filter(function (m) { return !stokGroup || sgOf(m) === stokGroup; }).sort(matSort);
+      (stokGroup ? [stokGroup] : gs).forEach(function (g) {
+        var list = inG.filter(function (m) { return sgOf(m) === g; });
+        if (!list.length) return;
+        var kg = list.reduce(function (a, m) { return a + (c.mknown[m.id] && c.mstock[m.id] > 0 && m.kgPerUnit ? c.mstock[m.id] * m.kgPerUnit : 0); }, 0);
+        h += '<div class="grp-head"><span class="label">' + SG[g] + ' · ' + list.length + '</span>' + (kg ? '<span class="tiny muted num">≈ ' + fmt(kg) + ' kg</span>' : '') + '</div><div class="card tight list">' + list.map(matRow).join('') + '</div>';
+      });
       if (!inG.length) h += '<div class="card empty">Bu grupta stok kalemi yok.</div>';
+      h += '<p class="tiny muted" style="margin:0 2px">Profil, boru ve köşebent boy boy, sac plaka plaka tutulur. Ayrıntılar için kaleme dokunun; WhatsApp\'a ayrıntılı liste "Paylaş" ile gider.</p>';
     }
     h += '<div class="btn-row"><button class="btn" type="button" data-act="toplu-sayim">' + ic('clipboard-check') + ' Toplu sayım</button>' +
-      '<button class="btn" type="button" data-act="' + (stokTab === 'malzeme' ? 'mat-new' : 'part-new') + '"' + (stokTab === 'malzeme' && stokGroup ? ' data-f="' + stokGroup + '"' : '') + '>' + ic('plus') + ' ' + (stokTab === 'malzeme' ? 'Yeni stok kalemi' : 'Yeni parça') + '</button></div>';
+      (stokTab === 'malzeme' ? '<button class="btn" type="button" data-act="transfer">' + ic('truck') + ' Transfer</button>' : '<button class="btn" type="button" data-act="part-new">' + ic('plus') + ' Yeni parça</button>') + '</div>' +
+      (stokTab === 'malzeme' ? '<button class="btn sm block" type="button" data-act="mat-new"' + (stokGroup && GROUPS[stokGroup] ? ' data-f="' + stokGroup + '"' : '') + '>' + ic('plus') + ' Diğer kalem ekle (aksesuar, ölçüsü serbest)</button>' : '');
     if (idle.length && stokTab !== 'malzeme') h += '<p class="tiny muted" style="margin:0">İhtiyaç olmayan parçalar: ' + esc(idle.map(function (f) { return f.p.name; }).join(', ')) + '</p>';
     return h;
   }
@@ -1625,7 +1781,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       '<div class="btn-row"><button class="btn" type="button" data-act="backup-download">' + ic('download') + ' Yedeği indir</button><button class="btn" type="button" data-act="backup-copy">' + ic('copy') + ' Yedeği kopyala</button></div>' +
       '<button class="btn block" type="button" data-act="backup-restore">' + ic('upload') + ' Yedekten geri yükle</button>' +
       '<button class="btn danger block" type="button" data-act="reset-all">' + ic('trash-2') + ' Tüm kayıtları sil</button>' +
-      '<p class="tiny muted" style="text-align:center;margin:4px 0 0">DUVPAN Fabrika · sürüm 3.1 · ' + fmt(S.entries.length) + ' kayıt</p></section>';
+      '<p class="tiny muted" style="text-align:center;margin:4px 0 0">DUVPAN Fabrika · sürüm 4 · ' + fmt(S.entries.length) + ' kayıt</p></section>';
     return h;
   }
 
@@ -2162,7 +2318,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     var body = '<form id="f-sayim" novalidate>' +
       '<div class="field"><label for="sy-item">Parça veya malzeme</label><select id="sy-item" name="secim">' + sayimOptions(sel) + '</select></div>' +
       '<div class="field" id="sy-loc"><span class="flabel">Nerede sayıldı</span>' + segRadios('loc', LOCS, e.loc || 'fabrika') + '</div>' +
-      '<div class="field"><label for="sy-qty">Sayılan miktar</label>' + stepper('sy-qty', 'counted', e.counted, 'Miktar', true) + '</div>' +
+      '<div class="field"><label for="sy-qty">Sayılan miktar (<span id="sy-unit"></span>)</label>' + stepper('sy-qty', 'counted', e.counted, 'Miktar', true) + '</div>' +
       '<div class="field"><label for="sy-date">Tarih</label><input id="sy-date" name="date" type="date" value="' + e.date + '" max="' + today() + '"></div>' +
       '<div class="field"><label for="sy-note">Not</label><input id="sy-note" name="note" type="text" value="' + esc(e.note) + '" placeholder="İsteğe bağlı" maxlength="200"></div>' +
       '<div class="effect" id="sy-effect" aria-live="polite"></div>' +
@@ -2174,6 +2330,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       function upd() {
         var x = cur(), q = decVal(f, 'counted');
         sh.querySelector('#sy-loc').hidden = !x.isM;
+        sh.querySelector('#sy-unit').textContent = x.unit;
         sh.querySelector('#sy-effect').innerHTML = '<div class="row between"><span>Sistemdeki stok</span><span class="num"><strong>' + (x.known ? fmtQ(x.st) : 'girilmedi') + '</strong> ' + (x.known ? esc(x.unit) : '') + '</span></div>' +
           (q >= 0 && f.elements.counted.value !== '' && x.known ? '<div class="row between"><span>Fark</span><span class="num"><strong>' + (q - x.st > 0 ? '+' : '') + fmtQ(q - x.st) + '</strong> ' + esc(x.unit) + '</span></div>' : '');
       }
@@ -2194,8 +2351,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
   function formTopluSayim() {
     var c = calc();
     var parts = S.parts.filter(function (p) { return p.active !== false && c.fc[p.id].need > 0; });
-    var mats = S.materials.filter(function (m) { return m.track && m.active !== false; })
-      .sort(function (a, b) { return (c.mfc[b.id].need > 0) - (c.mfc[a.id].need > 0); });
+    var mats = S.materials.filter(function (m) { return m.track && m.active !== false; }).sort(matSort);
     function row(prefix, x, unit, st, known) {
       return '<div class="recipe-row" style="grid-template-columns:1fr 120px"><label for="ts-' + prefix + x.id + '"><span class="item-title" style="font-size:14px">' + esc(x.name) + '</span>' +
         '<span class="item-sub" style="display:block">' + esc(x.spec || '') + (known ? ' · şu an ' + fmtQ(st) + ' ' + esc(unit) : ' · girilmedi') + '</span></label>' +
@@ -2212,7 +2368,10 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     var body = '<form id="f-toplu" novalidate><p class="muted small" style="margin:0">Fabrikada saydığınız miktarları yazın. Boş bıraktıklarınız değişmez. Parçalarda sadece süren ve sıradaki işlerde kullanılanlar listelenir.</p>' +
       '<div class="field"><label for="ts-date">Sayım tarihi</label><input id="ts-date" name="date" type="date" value="' + today() + '" max="' + today() + '"></div>' +
       (parts.length ? '<div class="label">Parçalar (adet)</div><div class="stack">' + parts.map(function (p) { return row('p', p, 'adet', c.stock[p.id], c.known[p.id]); }).join('') + '</div>' : '') +
-      (mats.length ? '<div class="label">Malzeme (fabrikadaki; sac için fabrika / lazerci / plazmacı ayrı)</div><div class="stack">' + mats.map(function (m) { return m.group === 'sac' ? locRow(m) : row('m', m, m.unit, c.mloc[m.id].fabrika, c.mknown[m.id]); }).join('') + '</div>' : '') +
+      (mats.length ? '<div class="label">Malzeme · boy boy (sac plaka plaka; fabrika / lazerci / plazmacı ayrı)</div>' + Object.keys(SG).map(function (g) {
+        var list = mats.filter(function (m) { return sgOf(m) === g; });
+        return list.length ? '<div class="tiny muted" style="margin:4px 0 -2px;font-weight:700">' + SG[g] + '</div><div class="stack">' + list.map(function (m) { return m.group === 'sac' ? locRow(m) : row('m', m, m.unit, c.mloc[m.id].fabrika, c.mknown[m.id]); }).join('') + '</div>' : '';
+      }).join('') : '') +
       '<button class="btn primary block" type="submit">' + ic('circle-check') + ' Sayımları kaydet</button></form>';
     openSheet('Toplu sayım', body, function (sh) {
       var f = sh.querySelector('form');
@@ -2989,6 +3148,72 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     });
   }
 
+  // ---------- Malzeme girişi (hadde ürünü; projeye bağlı değil) ----------
+  var hkLast = 'kare';
+  function formHadde(kind0) {
+    var kind = HK[kind0] ? kind0 : hkLast, vals = { len: '6', plaka: '6000×1510' };
+    var body = '<div class="form">' +
+      '<div class="field"><span class="flabel">1. Tür</span><div class="kind-grid" id="hk-kinds">' + Object.keys(HK).map(function (k) {
+        return '<button type="button" data-kind="' + k + '" aria-pressed="' + (k === kind) + '">' + esc(HK[k].label) + '</button>';
+      }).join('') + '</div></div>' +
+      '<form novalidate id="f-hadde"><div class="flabel" style="margin-bottom:6px">2. Ölçüler</div><div id="hk-fields" class="stack"></div>' +
+      '<div class="field"><label for="hk-qty">Adet (<span id="hk-unit"></span>)</label>' + stepper('hk-qty', 'qty', '', 'Adet', true) + '</div>' +
+      '<div class="field"><span class="flabel">Giriş</span>' + segRadios('mode', { gelen: 'Yeni geldi (stoğa ekle)', sayim: 'Sayım (stoğu eşitle)' }, 'gelen') + '</div>' +
+      '<div class="field"><span class="flabel">Nerede</span>' + segRadios('loc', LOCS, 'fabrika') + '</div>' +
+      '<div class="effect" id="hk-effect" aria-live="polite"></div>' +
+      '<button class="btn primary block" type="submit">' + ic('circle-check') + ' Listeye ekle</button>' +
+      '<p class="hint" style="margin:0">Aynı tür, ölçü ve boy daha önce girildiyse aynı kaleme eklenir. Ağırlık çelik için yaklaşık hesaplanır.</p></form></div>';
+    openSheet('Malzeme girişi', body, function (sh) {
+      var f = sh.querySelector('form');
+      function keep() { HK[kind].f.forEach(function (k) { if (f.elements['hk_' + k]) vals[k] = f.elements['hk_' + k].value; }); }
+      function draw() {
+        sh.querySelector('#hk-fields').innerHTML = HK[kind].f.map(function (k) {
+          var F = HK_F[k], txt = k === 'ebat' || k === 'plaka';
+          return '<div class="field"><label for="hk-' + k + '">' + F.label + '</label><input id="hk-' + k + '" name="hk_' + k + '" type="text"' + (txt ? '' : ' inputmode="decimal"') +
+            ' autocapitalize="off" autocomplete="off" value="' + esc(vals[k] || '') + '" placeholder="' + esc(F.ph) + '">' +
+            (F.quick ? '<div class="quick">' + F.quick.map(function (q) { return '<button type="button" data-set="' + q + '">' + q + (k === 'len' ? ' m' : '') + '</button>'; }).join('') + '</div>' : '') +
+            (F.hint ? '<div class="hint">' + F.hint + '</div>' : '') + '</div>';
+        }).join('');
+        sh.querySelector('#hk-unit').textContent = HK[kind].unit;
+        sh.querySelectorAll('#hk-kinds button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.kind === kind)); });
+        upd();
+      }
+      function cur() { keep(); return hkRead(kind, vals); }
+      function upd() {
+        var d = cur(), q = decVal(f, 'qty'), el = sh.querySelector('#hk-effect');
+        if (d.err) { el.innerHTML = '<span class="muted">Ölçüleri girince kalem adı ve stok burada görünür.</span>'; return; }
+        var m = hkFind(d), c = calc(), loc = radioVal(f, 'loc', 'fabrika'), sayim = radioVal(f, 'mode', 'gelen') === 'sayim', u = HK[kind].unit;
+        var base = m ? c.mloc[m.id][loc] : 0, kg = m && m.kgPerUnit ? m.kgPerUnit : hkKg(d), after = q >= 0 ? (sayim ? q : base + q) : base;
+        el.innerHTML = '<div class="row between"><span>Kalem</span><strong>' + esc(hkName(d)) + ' · ' + esc(hkSpec(d)) + '</strong></div>' +
+          '<div class="row between"><span>' + esc(cap(locIn(loc))) + ' stok</span><span class="num">' + (m ? fmtQ(base) : 'yeni kalem') + (q >= 0 && f.elements.qty.value !== '' ? ' → <strong>' + fmtQ(after) + '</strong>' : '') + ' ' + esc(u) + '</span></div>' +
+          (kg ? '<div class="row between"><span>Ağırlık</span><span class="num">≈ ' + fmt1(kg) + ' kg/' + esc(u) + (q > 0 ? ' · ' + (sayim ? 'toplam' : 'gelen') + ' ≈ ' + fmt(q * kg) + ' kg' : '') + '</span></div>' : '');
+      }
+      sh.querySelector('#hk-kinds').addEventListener('click', function (ev) {
+        var b = ev.target.closest('[data-kind]'); if (!b) return;
+        keep(); kind = b.dataset.kind; draw();
+        var first = f.querySelector('#hk-fields input'); if (first) first.focus();
+      });
+      f.addEventListener('input', upd); f.addEventListener('change', upd);
+      draw();
+      f.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var d = cur(), q = decVal(f, 'qty'), sayim = radioVal(f, 'mode', 'gelen') === 'sayim', loc = radioVal(f, 'loc', 'fabrika');
+        if (d.err) return fieldError(f, 'hk_' + d.err, d.err === 'ebat' || d.err === 'plaka' ? 'Ölçüyü 40×40 gibi yazın.' : HK_F[d.err].label.replace(/ \(.*\)/, '') + ' girin.');
+        if (f.elements.qty.value === '' || !(q >= 0) || (!sayim && !(q > 0))) return fieldError(f, 'qty', sayim ? 'Sayılan adedi girin.' : 'Gelen adedi girin.');
+        var m = hkFind(d), isNew = !m;
+        if (!m) {
+          m = { id: uid('m'), name: hkName(d), spec: hkSpec(d), thick: d.t ? dtxt(d.t) : '', group: HK[kind].group, unit: HK[kind].unit, kgPerUnit: hkKg(d), track: true, leadDays: 5,
+            supplier: '', phone: '', note: '', active: true, hk: d };
+          S.materials.push(m);
+        } else { m.active = true; m.track = true; }
+        if (sayim) saveEntry(null, { type: 'sayim', counted: q, date: today(), note: 'Malzeme girişi', partId: '', materialId: m.id, loc: loc });
+        else saveEntry(null, { type: 'malzeme', materialId: m.id, qty: q, loc: loc, siparisId: '', supplier: '', irsaliye: '', date: today(), note: 'Malzeme girişi' });
+        hkLast = kind;
+        commit(m.name + ' (' + m.spec + '): ' + fmtQ(q) + ' ' + m.unit + (sayim ? ' sayıldı' : ' eklendi') + (isNew ? ' · yeni kalem' : ''));
+      });
+    });
+  }
+
   function formMaterial(m, group0) {
     var e = m || { name: '', spec: group0 === 'sac' ? '6000×1510' : '6 m boy', thick: '', group: group0 || 'profil', unit: group0 === 'sac' ? 'plaka' : group0 === 'aksesuar' ? 'adet' : 'boy', kgPerUnit: '', track: true, leadDays: 5, supplier: '', phone: '', note: '', active: true };
     var used = m && (S.entries.some(function (x) { return x.materialId === m.id; }) || S.parts.some(function (p) { return p.materialId === m.id; }) || S.products.some(function (pr) { return qtyMat(pr, m.id) > 0; }) || S.projects.some(function (pj) { return (pj.extras || []).some(function (x) { return x.materialId === m.id; }); }));
@@ -3118,7 +3343,8 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       '<div class="label">Kesim</div>' + big('kesim', 'scissors', 't-kesim', 'Fabrikada kesildi', 'Testere/plazma: manşon, profil parçaları', 'fabrika') +
       big('kesim', 'scissors', 't-kesim', 'Lazerden kesim geldi', 'Lazerciden gelen dikme sacı, flanş', 'fason') +
       big('talep', 'send', 't-talep', 'Lazere kesim iste', 'Talep ve WhatsApp mesajı') +
-      '<div class="label">Malzeme</div>' + big('malzeme', 'package', 't-malzeme', 'Malzeme geldi', 'Sac, boru, profil, dübel · fabrikaya, lazerciye veya plazmacıya') +
+      '<div class="label">Malzeme</div>' + big('hadde', 'plus', 't-malzeme', 'Malzeme girişi', 'Profil, boru, köşebent, NPU, lama, sac · tür seç, ölçü ve adet yaz') +
+      big('malzeme', 'package', 't-malzeme', 'Malzeme geldi (siparişten)', 'Listede olan malzeme · fabrikaya, lazerciye veya plazmacıya') +
       big('transfer', 'truck', 't-malzeme', 'Malzeme transferi', 'Örn. fabrikadan lazerciye sac') +
       big('siparis', 'truck', 't-talep', 'Malzeme siparişi', 'Tedarikçiye sipariş ve WhatsApp mesajı') +
       '<div class="label">Sevkiyat</div>' + big('galvaniz', 'flame', 't-galv', 'Galvanize gönder', 'Fabrikadan çıkan sefer') +
@@ -3167,6 +3393,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
         var st = data && data.state ? data.state : data;
         try { if (st && (st.v === 1 || st.v === 2)) st = migrate(st); } catch (e) { st = null; }
         if (!valid(st)) return fieldError(f, 'text', 'Bu bir DUVPAN Fabrika yedeği değil.');
+        fixData(st);
         confirmSheet('Geri yükle', fmt(st.entries.length) + ' kayıt yüklenecek; bu cihazdaki mevcut kayıtlar silinecek.', 'Geri yükle', function () { S = st; commit('Yedek geri yüklendi'); });
       });
     });
@@ -3218,7 +3445,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
     if (t.classList && t.classList.contains('sheet-back')) { closeSheet(); return; }
     var st = t.closest('[data-step],[data-add],[data-set]');
     if (st) {
-      var input = st.closest('.field').querySelector('input[type=number]');
+      var input = st.closest('.field').querySelector('input[type=number], input[inputmode=decimal]');
       var cur = Math.max(0, num(input.value) || 0);
       if (st.dataset.step) input.value = Math.max(0, Math.round((cur + Number(st.dataset.step)) * 100) / 100);
       else if (st.dataset.add) input.value = cur + Number(st.dataset.add);
@@ -3240,6 +3467,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       case 'sayim': formSayim(null, pid, mid); break;
       case 'toplu-sayim': formTopluSayim(); break;
       case 'malzeme': formMalzeme(null, mid); break;
+      case 'hadde': formHadde(a.dataset.f); break;
       case 'siparis': formSiparis(null, mid); break;
       case 'transfer': formTransfer(null, mid); break;
       case 'galvaniz': formSevk('galvaniz', null, a.dataset.project); break;
@@ -3280,6 +3508,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       case 'mat-edit': formMaterial(material(id || mid)); break;
       case 'filter': histFilter = a.dataset.f; histAll = false; render(); break;
       case 'show-all': histAll = true; render(); break;
+      case 'pano-fold': panoFold = !panoFold; render(); break;
       case 'stok-tab': stokTab = a.dataset.f; render(); break;
       case 'stok-group': stokGroup = a.dataset.f; render(); break;
       case 'stok-share': stokShare(); break;
@@ -3294,7 +3523,7 @@ const ICON = {"receipt":"<svg class=\"i\" aria-hidden=\"true\" stroke=\"currentC
       case 'backup-restore': backupRestore(); break;
       case 'reset-all':
         confirmSheet('Tüm kayıtları sil', 'Bu cihazdaki tüm kayıtlar silinecek; projeler, ürünler ve ayarlar başlangıç haline döner. Önce yedek almanızı öneririz.', 'Hepsini sil', function () {
-          S = seed(); setRoute('pano'); commit('Tüm kayıtlar silindi');
+          S = seed(); fixData(S); setRoute('pano'); commit('Tüm kayıtlar silindi');
         });
         break;
       case 'install':
